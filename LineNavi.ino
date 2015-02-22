@@ -1,9 +1,23 @@
 #include "LineNaviRoutes.h"
 /*
-#define EAST  0
-#define NORTH 1
-#define WEST  2
-#define SOUTH 3
+                       spent rods
+
+                     +6    +5    +4    +3
+                     |     |     |     |
+                   +---+ +---+ +---+ +---+
+                     |     |     |     |                     
+              +      |     |     |     |      +
+              |      |     |     |     |      |
+reactor A +---------------------------------------+ reactor B
+          1   |      |     |     |     |      |   2
+              +      |     |     |     |      +
+                     |     |     |     |
+                   +---+ +---+ +---+ +---+
+                     |     |     |     |
+                     +7    +8    +9    +10
+
+                        new rods
+
 */
 #define NAVI_ARRAY_MAX 6
 
