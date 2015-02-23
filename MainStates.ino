@@ -8,9 +8,6 @@ State movingToLoadedReactorState(){
 
 }
 
-State aligningToReactorState(){
-
-}
 
 State extractingRodFromReactorState(){
 
