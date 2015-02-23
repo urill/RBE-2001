@@ -1,8 +1,9 @@
 #include "SM.h"
+#include "LineNavi.h"
 
 SM sm(waitingForStartState);
 SM moveSM(stopState);
-//LineNavi navi();
+LineNavi navi();
 
 void setup() {
 

@@ -38,7 +38,7 @@ r[3][7] = [5,3,5,5,5,1,5]
 
 out = pprint.pformat(r).replace('[','{').replace(']','}')
 
-out = 'const byte ROUTES[11][11][7] PROGMEM=\n' + out + ';'
+out = '#include "Arduino.h"\nconst byte ROUTES[11][11][7] PROGMEM=\n' + out + ';'
 
 with open('LineNaviRoutes.h','w') as f:
     f.write(out)
