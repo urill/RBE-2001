@@ -1,5 +1,3 @@
-
-
 State waitingForStartState(){
   // start the job some time
 }

@@ -1,16 +1,16 @@
 #include "DiffDrive.h"
-DiffDrive::DiffDrive(int pinLeft, int pinRight){
-  leftWheel.attach(pinLeft,1000,2000);
-  rightWheel.attach(pinRight,1000,2000);
-}
+extern Servo leftWheel;
+extern Servo rightWheel;
 
 void DiffDrive::go(int speed,int steer){
-  int _speed = map(speed,-100,100,0,180);
-  int _steer = map(steer,-100,100,0,90);
-  int _leftOutput = constrain(_speed + _steer,0,180);
-  int _rightOutput = constrain(_speed - _steer,0,180);
-  leftWheel.write(_leftOutput);
-  rightWheel.write(_rightOutput);
+  int _speed = map(speed,-100,100,1000,2000);
+  int _steer = map(steer,-200,200,-1000,1000);
+  int _leftOutput = constrain(_speed + _steer,1000,2000);
+  int _rightOutput = constrain(_speed - _steer,1000,2000);
+  Serial.println(_leftOutput);
+  Serial.println(_rightOutput);
+  leftWheel.writeMicroseconds(_leftOutput);
+  rightWheel.writeMicroseconds(_rightOutput);
 }
 
 void DiffDrive::stop(){
