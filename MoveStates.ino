@@ -25,10 +25,29 @@ State turnAroundWaitState(){
   }
 }
 
-State lineFollowState(){
-//or found the crossing line
-  if (moveSM.Timeout(LINE_FOLLOW_TIMEOUT)){
+boolean processCrossingLine(){
+  int crossSensor = analogRead(PIN_LINE_SENSOR_CROSS);
+  if (crossSensor < LINE_FOLLOW_CROSSING_THRESHOLD){
     moveSM.Set(stopState);
+    return true;
+  }
+  return false;
+}
+
+State lineFollowState(){
+  if (processCrossingLine()) return;
+  int leftSensor = analogRead(PIN_LINE_SENSOR_L);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+  lineFollowSensorDifference = (double) (rightSensor - leftSensor);
+  lineFollowPID.Compute();
+  drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
+  moveSM.Set(lineFollowWaitState);
+}
+
+State lineFollowWaitState(){
+  if (processCrossingLine()) return;
+  if (moveSM.Timeout(LINE_FOLLOW_SAMPLING_TIMEOUT)){
+    moveSM.Set(lineFollowState);
   }
 }
 

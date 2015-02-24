@@ -6,16 +6,21 @@
 
 #define PIN_LEFT_WHEEL 4
 #define PIN_RIGHT_WHEEL 5
+#define PIN_LINE_SENSOR_L A0
+#define PIN_LINE_SENSOR_R A1
+#define PIN_LINE_SENSOR_CROSS A2
 
 #define TURN_SPEED 50
 #define LINE_FOLLOW_SPEED 50
 #define TURN_TIMEOUT 1000
 #define TURN_AROUND_TIMEOUT 2000
-#define LINE_FOLLOW_TIMEOUT 2000
+#define LINE_FOLLOW_TIMEOUT 10000
 
 #define LINE_FOLLOW_KP 1
 #define LINE_FOLLOW_KI 0
 #define LINE_FOLLOW_KD 0
+#define LINE_FOLLOW_SAMPLING_TIMEOUT 50
+#define LINE_FOLLOW_CROSSING_THRESHOLD 500
 
 double lineFollowSensorDifference, lineFollowSteer;
 PID lineFollowPID(&lineFollowSensorDifference, &lineFollowSteer, 0 ,LINE_FOLLOW_KP,LINE_FOLLOW_KI,LINE_FOLLOW_KD, DIRECT);
@@ -35,8 +40,8 @@ void setup() {
   Serial.begin(115200);
   leftWheel.attach(PIN_LEFT_WHEEL);
   rightWheel.attach(PIN_RIGHT_WHEEL);
-  lineFollowPID.SetSampleTime(50);
-  lineFollowPID.SetMode(AUTOMATIC);
+  lineFollowPID.SetOutputLimits(-100, 100);
+  lineFollowPID.SetMode(MANUAL);
 }
 
 void loop() {
