@@ -34,8 +34,17 @@ boolean processCrossingLine(){
   return false;
 }
 
+boolean processVSwitch(){
+  if (digitalRead(PIN_V_SWITCH) == LOW){
+    moveSM.Set(stopState);
+    return true;
+  }
+  return false;
+}
+
 State lineFollowState(){
-  if (processCrossingLine()) return;
+  if (stopOnCrossLine && processCrossingLine()) return;
+  if (stopOnVSwitch && processVSwitch()) return;
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
   int rightSensor = analogRead(PIN_LINE_SENSOR_R);
   lineFollowSensorDifference = (double) (rightSensor - leftSensor);
@@ -45,16 +54,12 @@ State lineFollowState(){
 }
 
 State lineFollowWaitState(){
-  if (processCrossingLine()) return;
+  if (stopOnCrossLine && processCrossingLine()) return;
+  if (stopOnVSwitch && processVSwitch()) return;
   if (moveSM.Timeout(LINE_FOLLOW_SAMPLING_TIMEOUT)){
     moveSM.Set(lineFollowState);
   }
 }
-
-State alignToReactorState(){
-  //go until the button depressed
-}
-
 
 State stopState(){
   drive.stop();

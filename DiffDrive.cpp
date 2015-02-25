@@ -7,8 +7,6 @@ void DiffDrive::go(int speed,int steer){
   int _steer = map(steer,-200,200,-1000,1000);
   int _leftOutput = constrain(_speed + _steer,1000,2000);
   int _rightOutput = constrain(_speed - _steer,1000,2000);
-  Serial.println(_leftOutput);
-  Serial.println(_rightOutput);
   leftWheel.writeMicroseconds(_leftOutput);
   rightWheel.writeMicroseconds(_rightOutput);
 }
