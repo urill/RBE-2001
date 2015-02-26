@@ -27,7 +27,7 @@ State turnAroundWaitState(){
 
 boolean processCrossingLine(){
   int crossSensor = analogRead(PIN_LINE_SENSOR_CROSS);
-  if (crossSensor < LINE_FOLLOW_CROSSING_THRESHOLD){
+  if (crossSensor > LINE_FOLLOW_CROSSING_THRESHOLD){
     moveSM.Set(stopState);
     return true;
   }
@@ -47,7 +47,7 @@ State lineFollowState(){
   if (stopOnVSwitch && processVSwitch()) return;
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
   int rightSensor = analogRead(PIN_LINE_SENSOR_R);
-  lineFollowSensorDifference = (double) (rightSensor - leftSensor);
+  lineFollowSensorDifference = (double) (leftSensor - rightSensor);
   lineFollowPID.Compute();
   drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
   moveSM.Set(lineFollowWaitState);

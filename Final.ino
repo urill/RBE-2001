@@ -26,10 +26,10 @@
 #define LINE_FOLLOW_TIMEOUT 10000
 
 #define LINE_FOLLOW_KP 1
-#define LINE_FOLLOW_KI 0
+#define LINE_FOLLOW_KI 0.001
 #define LINE_FOLLOW_KD 0
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
-#define LINE_FOLLOW_CROSSING_THRESHOLD 500
+#define LINE_FOLLOW_CROSSING_THRESHOLD 900
 
 #define GRIPPER_OPEN_POSITION 90
 #define GRIPPER_HOLD_POSITION 80
@@ -46,16 +46,17 @@ Servo rightWheel;
 Servo elevatorMotor;
 Servo gripper;
 
-LineNavi navi();
+LineNavi navi;
 DiffDrive drive;
 
 
 SM sm(waitingForStartState_h,waitingForStartState_b);
 SM moveSM(stopState);
-SM elevatorSM();
-SM gripperSM();
-SM navigationSM();
+SM elevatorSM(Nop);
+SM gripperSM(Nop);
+SM navigationSM(Nop);
 
+//SM testSM(sensorReadoutState2);
 SM testSM(blahState_h,blahState_b);
 
 boolean reactorAReplaced = false;
@@ -67,7 +68,20 @@ boolean stopOnVSwitch;
 byte currentPosition = NEW_1;
 
 void setup() {
-  //Serial.begin(115200);
+  pinMode(PIN_V_SWITCH, INPUT_PULLUP);
+  pinMode(PIN_GO_BUTTON, INPUT_PULLUP);
+  pinMode(PIN_ELEVATOR_UPPER, INPUT_PULLUP);
+  pinMode(PIN_ELEVATOR_LOWER, INPUT_PULLUP);
+  pinMode(PIN_LINE_SENSOR_L,INPUT);
+  pinMode(PIN_LINE_SENSOR_R,INPUT);
+  pinMode(PIN_LINE_SENSOR_CROSS,INPUT);
+  pinMode(PIN_ELEVATOR_POT,INPUT);
+  pinMode(PIN_LEFT_WHEEL,OUTPUT);
+  pinMode(PIN_RIGHT_WHEEL,OUTPUT);
+  pinMode(PIN_ELEVATOR_MOTOR,OUTPUT);
+  pinMode(PIN_GRIPPER,OUTPUT);
+
+  Serial.begin(115200);
   lcd.begin(16,2);
   leftWheel.attach(PIN_LEFT_WHEEL);
   rightWheel.attach(PIN_RIGHT_WHEEL);
@@ -75,12 +89,13 @@ void setup() {
   gripper.attach(PIN_GRIPPER);
   lineFollowPID.SetOutputLimits(-100, 100);
   lineFollowPID.SetMode(MANUAL);
+  lcd.print("Ready");
 }
 
 void loop() {
-  EXEC(sm);
-  EXEC(moveSM);
+  //EXEC(sm);
   EXEC(testSM);
+  EXEC(moveSM);
   EXEC(elevatorSM);
   EXEC(gripperSM);
 }

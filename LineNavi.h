@@ -41,7 +41,6 @@ reactor A +---------------------------------------+ reactor B
 
 class LineNavi{
 public:
-  LineNavi();
   byte getNextAction();
   void setNavigation(byte from, byte to);
 private:

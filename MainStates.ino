@@ -1,3 +1,4 @@
+
 State waitingForStartState_h(){
   info(F("Ready"));
 }
@@ -35,14 +36,14 @@ State movingToLoadedReactorState_h(){
   boolean stopOnVSwitch = false;
   elevatorSM.Set(elevatorDownState);
   gripperSM.Set(gripperOpenState);
-  if (!reactorAReplaced)
+  if (!reactorAReplaced){
     navi.setNavigation(currentPosition, REACTOR_A);
     info(F("Heading R A"));
     currentPosition = REACTOR_A;
     reactorAReplaced = true;
     return;
   }
-  else if (!reactorBReplaced)
+  else if (!reactorBReplaced){
     navi.setNavigation(currentPosition, REACTOR_B);
     info(F("Heading R B"));
     currentPosition = REACTOR_B;
@@ -77,13 +78,9 @@ State extractingRodFromReactorState_1(){
 }
 
 State extractingRodFromReactorState_2(){
-  if (gripperSM.Finish){
+  if (gripperSM.Finished){
     gripperSM.Set(gripperHoldState);
   }
-}
-
-State extractingRodFromReactorState_1(){
-  gripperSM.Set(gripperHoldState);
 }
 
 State movingToSpentStorageState(){
