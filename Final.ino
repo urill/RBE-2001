@@ -14,6 +14,7 @@
 #define PIN_LINE_SENSOR_R A1
 #define PIN_LINE_SENSOR_CROSS A2
 #define PIN_V_SWITCH A3
+#define PIN_ELEVATOR_POT A4
 
 #define TURN_SPEED 50
 #define LINE_FOLLOW_SPEED 50
@@ -31,6 +32,7 @@
 #define GRIPPER_OPEN_POSITION 90
 #define GRIPPER_HOLD_POSITION 80
 #define GRIPPER_CLOSE_POSITION 70
+#define GRIPPER_ACTION_TIMEOUT 500
 
 LiquidCrystal lcd(40,41,42,43,44,45);
 
@@ -67,6 +69,8 @@ void setup() {
   lcd.begin(16,2);
   leftWheel.attach(PIN_LEFT_WHEEL);
   rightWheel.attach(PIN_RIGHT_WHEEL);
+  elevatorMotor.attach(PIN_ELEVATOR_MOTOR);
+  gripper.attach(PIN_GRIPPER);
   lineFollowPID.SetOutputLimits(-100, 100);
   lineFollowPID.SetMode(MANUAL);
 }
@@ -75,6 +79,8 @@ void loop() {
   EXEC(sm);
   EXEC(moveSM);
   EXEC(testSM);
+  EXEC(elevatorSM);
+  EXEC(gripperSM);
 }
 
 void verbose(String s){

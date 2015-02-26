@@ -33,6 +33,8 @@ boolean processNavigate(){
 State movingToLoadedReactorState_h(){
   boolean stopOnCrossLine = true;
   boolean stopOnVSwitch = false;
+  elevatorSM.Set(elevatorDownState);
+  gripperSM.Set(gripperOpenState);
   if (!reactorAReplaced)
     navi.setNavigation(currentPosition, REACTOR_A);
     info(F("Heading R A"));
@@ -66,12 +68,22 @@ State alignToReactorState_h(){
 
 State alignToReactorState_b(){
   if (moveSM.Finished) {
-    sm.Set(extractingRodFromReactorState);
+    sm.Set(extractingRodFromReactorState_1);
   }
 }
 
-State extractingRodFromReactorState(){
+State extractingRodFromReactorState_1(){
+  gripperSM.Set(gripperHoldState);
+}
 
+State extractingRodFromReactorState_2(){
+  if (gripperSM.Finish){
+    gripperSM.Set(gripperHoldState);
+  }
+}
+
+State extractingRodFromReactorState_1(){
+  gripperSM.Set(gripperHoldState);
 }
 
 State movingToSpentStorageState(){
