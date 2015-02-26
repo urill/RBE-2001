@@ -25,16 +25,27 @@
 #define TURN_AROUND_TIMEOUT 2000
 #define LINE_FOLLOW_TIMEOUT 10000
 
-#define LINE_FOLLOW_KP 1
-#define LINE_FOLLOW_KI 0.001
+#define LINE_FOLLOW_KP 0.03
+#define LINE_FOLLOW_KI 0.00001
 #define LINE_FOLLOW_KD 0
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
 #define LINE_FOLLOW_CROSSING_THRESHOLD 900
 
 #define GRIPPER_OPEN_POSITION 90
-#define GRIPPER_HOLD_POSITION 80
-#define GRIPPER_CLOSE_POSITION 70
+#define GRIPPER_HOLD_POSITION 160
+#define GRIPPER_CLOSE_POSITION 165
 #define GRIPPER_ACTION_TIMEOUT 500
+
+#define POT_LOWER_VALUE 130
+#define POT_UPPER_VALUE 206
+#define ELEVATOR_UP_THROTTLE 1200
+#define ELEVATOR_DOWN_THROTTLE 1700
+#define ELEVATOR_UP_APPROACHING_THROTTLE 1300
+#define ELEVATOR_DOWN_APPROACHING_THROTTLE 1600
+#define ELEVATOR_UP_APPROACHING_THRESHOLD 170
+#define ELEVATOR_DOWN_APPROACHING_THRESHOLD 160
+#define ELEVATOR_MOVE_TIMEOUT 5000
+#define ELEVATOR_UP_HOLD_THROTTLE 1460
 
 LiquidCrystal lcd(40,41,42,43,44,45);
 
@@ -56,8 +67,9 @@ SM elevatorSM(Nop);
 SM gripperSM(Nop);
 SM navigationSM(Nop);
 
-//SM testSM(sensorReadoutState2);
-SM testSM(blahState_h,blahState_b);
+//SM testSM(sensorReadoutState3);
+//SM testSM(blahState_h,blahState_b);
+SM testSM(testElevatorStateU_h,testElevatorStateU_b);
 
 boolean reactorAReplaced = false;
 boolean reactorBReplaced = false;
@@ -85,10 +97,11 @@ void setup() {
   lcd.begin(16,2);
   leftWheel.attach(PIN_LEFT_WHEEL);
   rightWheel.attach(PIN_RIGHT_WHEEL);
-  elevatorMotor.attach(PIN_ELEVATOR_MOTOR);
+  elevatorMotor.attach(PIN_ELEVATOR_MOTOR,1000,2000);
+  //elevatorMotor.attach(PIN_ELEVATOR_MOTOR);
   gripper.attach(PIN_GRIPPER);
   lineFollowPID.SetOutputLimits(-100, 100);
-  lineFollowPID.SetMode(MANUAL);
+  lineFollowPID.SetMode(AUTOMATIC);
   lcd.print("Ready");
 }
 

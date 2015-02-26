@@ -50,6 +50,8 @@ State lineFollowState(){
   lineFollowSensorDifference = (double) (leftSensor - rightSensor);
   lineFollowPID.Compute();
   drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
+  //Serial.println(lineFollowSensorDifference);
+  //Serial.println(lineFollowSteer);
   moveSM.Set(lineFollowWaitState);
 }
 

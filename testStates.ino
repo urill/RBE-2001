@@ -29,6 +29,13 @@ State sensorReadoutState2(){
   }
 }
 
+State sensorReadoutState3(){
+  if (testSM.Timeout(100)){
+  Serial.println(analogRead(PIN_ELEVATOR_POT));
+  testSM.Set(sensorReadoutState3);
+  }
+}
+
 State blahState_h(){
   moveSM.Set(lineFollowState);
 }
@@ -39,13 +46,31 @@ State blahState_b(){
   }
 }
 
-State blahState2_h(){
-  moveSM.Set(turnLeftState);
-  Serial.println("turn left");
+State testElevatorStateU_h(){
+  //Serial.println("in u h");
+  Serial.println("Elevator Up");
+  elevatorSM.Set(elevatorUpState);
+  gripperSM.Set(gripperHoldState);
 }
 
-State blahState2_b(){
-  if (moveSM.Finished && moveSM.Timeout(4000)) {
-    testSM.Set(blahState_h,blahState_b);
+State testElevatorStateU_b(){
+  //Serial.println("in u b");
+  if (elevatorSM.Finished && testSM.Timeout(4000)) {
+    testSM.Set(testElevatorStateD_h,testElevatorStateD_b);
+  }
+}
+
+State testElevatorStateD_h(){
+  //Serial.println("in d h");
+  Serial.println("Elevator Down");
+  elevatorSM.Set(elevatorDownState);
+  gripperSM.Set(gripperOpenState);
+}
+
+State testElevatorStateD_b(){
+  //Serial.println("in d b");
+  if (elevatorSM.Finished && testSM.Timeout(4000)) {
+    gripperSM.Set(gripperHoldState);
+    testSM.Set(testElevatorStateU_h,testElevatorStateU_b);
   }
 }
