@@ -47,7 +47,7 @@ State lineFollowState(){
   if (stopOnVSwitch && processVSwitch()) return;
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
   int rightSensor = analogRead(PIN_LINE_SENSOR_R);
-  lineFollowSensorDifference = (double) (leftSensor - rightSensor);
+  lineFollowSensorDifference = (double) (rightSensor - leftSensor);
   lineFollowPID.Compute();
   drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
   //Serial.println(lineFollowSensorDifference);
