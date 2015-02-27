@@ -36,41 +36,75 @@ State sensorReadoutState3(){
   }
 }
 
-State blahState_h(){
+State testFollowLine_1(){
+  info("following line");
+  stopOnVSwitch = false;
+  stopOnCrossLine = true;
   moveSM.Set(lineFollowState);
+  testSM.Set(testFollowLine_2);
 }
 
-State blahState_b(){
+State testFollowLine_2(){
   if (moveSM.Finished) {
-    //testSM.Set(blahState2_h,blahState2_b);
+    info("turning around");
+    moveSM.Set(turnAroundState);
+    testSM.Set(testFollowLine_3);
   }
 }
 
-State testElevatorStateU_h(){
-  //Serial.println("in u h");
-  Serial.println("Elevator Up");
-  elevatorSM.Set(elevatorUpState);
-  gripperSM.Set(gripperHoldState);
-}
-
-State testElevatorStateU_b(){
-  //Serial.println("in u b");
-  if (elevatorSM.Finished && testSM.Timeout(4000)) {
-    testSM.Set(testElevatorStateD_h,testElevatorStateD_b);
+State testFollowLine_3(){
+  if (moveSM.Finished) {
+    testSM.Set(testFollowLine_1);
   }
 }
 
-State testElevatorStateD_h(){
-  //Serial.println("in d h");
-  Serial.println("Elevator Down");
+
+State blahState_h(){
+  info("following line");
+  stopOnVSwitch = true;
+  moveSM.Set(lineFollowState);
   elevatorSM.Set(elevatorDownState);
   gripperSM.Set(gripperOpenState);
 }
 
-State testElevatorStateD_b(){
-  //Serial.println("in d b");
-  if (elevatorSM.Finished && testSM.Timeout(4000)) {
-    gripperSM.Set(gripperHoldState);
+State blahState_b(){
+  if (moveSM.Finished) {
+    testSM.Set(testGripState_h,testGripState_b);
+  }
+}
+
+State testGripState_h(){
+  info("gripper hold");
+  gripperSM.Set(gripperHoldState);
+}
+
+State testGripState_b(){
+  if (gripperSM.Finished){
     testSM.Set(testElevatorStateU_h,testElevatorStateU_b);
   }
 }
+
+State testElevatorStateU_h(){
+  info("elevator up");
+  elevatorSM.Set(elevatorUpState);
+}
+
+State testElevatorStateU_b(){
+  if (elevatorSM.Finished) {
+    gripperSM.Set(gripperOpenState);
+    testSM.Finish();
+  }
+}
+
+/*
+State testElevatorStateD_h(){
+  info("elevator down")
+  elevatorSM.Set(elevatorDownState);
+}
+
+State testElevatorStateD_b(){
+  if (elevatorSM.Finished) {
+    testSM.Set(testGripState_h,testGripState_b);
+  }
+}
+*/

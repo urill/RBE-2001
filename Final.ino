@@ -17,19 +17,22 @@
 #define PIN_V_SWITCH 22
 #define PIN_ELEVATOR_UPPER 23
 #define PIN_ELEVATOR_LOWER 24
+#define PIN_BUMPER_L 25
+#define PIN_BUMPER_R 26
 
 #define TURN_SPEED 50
 #define LINE_FOLLOW_SPEED 50
+#define LINE_FOLLOW_APPROACHING_SPEED 20
 
-#define TURN_TIMEOUT 1000
-#define TURN_AROUND_TIMEOUT 2000
+#define TURN_TIMEOUT 500
+#define TURN_AROUND_TIMEOUT 1800
 #define LINE_FOLLOW_TIMEOUT 10000
 
-#define LINE_FOLLOW_KP 0.03
+#define LINE_FOLLOW_KP 0.02
 #define LINE_FOLLOW_KI 0.00001
 #define LINE_FOLLOW_KD 0
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
-#define LINE_FOLLOW_CROSSING_THRESHOLD 900
+#define LINE_FOLLOW_CROSSING_THRESHOLD 700
 
 #define GRIPPER_OPEN_POSITION 90
 #define GRIPPER_HOLD_POSITION 160
@@ -67,9 +70,10 @@ SM elevatorSM(Nop);
 SM gripperSM(Nop);
 SM navigationSM(Nop);
 
-//SM testSM(sensorReadoutState3);
+//SM testSM(sensorReadoutState1);
+SM testSM(testFollowLine_1);
 //SM testSM(blahState_h,blahState_b);
-SM testSM(testElevatorStateU_h,testElevatorStateU_b);
+//SM testSM(testElevatorStateU_h,testElevatorStateU_b);
 
 boolean reactorAReplaced = false;
 boolean reactorBReplaced = false;
@@ -98,7 +102,6 @@ void setup() {
   leftWheel.attach(PIN_LEFT_WHEEL);
   rightWheel.attach(PIN_RIGHT_WHEEL);
   elevatorMotor.attach(PIN_ELEVATOR_MOTOR,1000,2000);
-  //elevatorMotor.attach(PIN_ELEVATOR_MOTOR);
   gripper.attach(PIN_GRIPPER);
   lineFollowPID.SetOutputLimits(-100, 100);
   lineFollowPID.SetMode(AUTOMATIC);
