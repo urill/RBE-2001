@@ -3,8 +3,12 @@
 #include <SM.h>
 #include <LiquidCrystal.h>
 #include <Bounce2.h>
+#include <BluetoothClient.h>
+#include <BluetoothMaster.h>
+#include <ReactorProtocol.h>
 #include "LineNavi.h"
 #include "DiffDrive.h"
+#include "BluetoothDefinitions.h"
 
 #define PIN_GO_BUTTON 2
 #define PIN_LEFT_WHEEL 4
@@ -61,6 +65,8 @@
 #define ELEVATOR_MOVE_TIMEOUT 5000
 #define ELEVATOR_UP_HOLD_THROTTLE 1460
 
+
+
 LiquidCrystal lcd(40,41,42,43,44,45);
 
 double lineFollowSensorDifference, lineFollowSteer;
@@ -81,6 +87,8 @@ SM moveSM(stopState);
 SM elevatorSM(Nop);
 SM gripperSM(Nop);
 SM navigationSM(Nop);
+SM bluetoothReceiveSM(bluetoothReceiveState);
+SM bluetoothSendSM(Nop);
 
 SM testSM(testHoldRod_0);
 //SM testSM(testTurnLeft_0);
@@ -102,10 +110,15 @@ boolean errorFlag = false;
 
 unsigned long lastLineFollowStarted;
 
+ReactorProtocol pcol(byte(BLUETOOTH_ADDRESS));
+BluetoothClient bt;
+BluetoothMaster btmaster;
+
 boolean bluetoothStopFlag;
 boolean bluetoothResumeFlag;
 byte bluetoothSpentAvailability;
 byte bluetoothNewAvailability;
+byte radiationLevel;
 
 void setup() {
   pinMode(PIN_V_SWITCH, INPUT_PULLUP);
@@ -127,6 +140,8 @@ void setup() {
   goButton.interval(5);
 
   Serial.begin(115200);
+  Serial1.begin(115200);
+
   lcd.begin(16,2);
   leftWheel.attach(PIN_LEFT_WHEEL);
   rightWheel.attach(PIN_RIGHT_WHEEL);
@@ -144,6 +159,7 @@ void loop() {
   EXEC(moveSM);
   EXEC(elevatorSM);
   EXEC(gripperSM);
+  EXEC(bluetoothReceiveSM);
 }
 
 void verbose(String s){

@@ -9,6 +9,7 @@ State mainWaitingForStartState(){
 State mainWaitingForStartState_b(){
   if (goButton.fell()){
     sm.Set(mainMovingToSpentReactorState_h,mainMovingToSpentReactorState_b);
+    bluetoothSendSM.Set(bluetoothSendHBState);
   }
 
   if (digitalRead(PIN_BUMPER_L) == LOW){
@@ -152,7 +153,7 @@ State mainRetractAndTurnAround_2(){
 }
 
 State mainMovingToSpentStorageState(){
-  
+
 }
 
 State insertingRodToSpentStorageState(){
