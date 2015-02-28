@@ -1,3 +1,9 @@
+void setLineFollowStopCondition(boolean crossLine, boolean vSwitch, boolean bumper){
+  stopOnCrossLine = crossLine;
+  stopOnVSwitch = vSwitch;
+  stopOnBumperSwitch = bumper;
+}
+
 State turnLeftState(){
   drive.go(TURN_FORWARD_SPEED,-TURN_SPEED);
   moveSM.Set(turnLeftWaitState);

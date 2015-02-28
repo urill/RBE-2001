@@ -1,11 +1,43 @@
 
-State waitingForStartState_h(){
-  info(F("Ready"));
+State mainWaitingForStartState(){
+  info(F("Waiting for GO"));
+  elevatorSM.Set(elevatorDownState);
+  gripperSM.Set(gripperOpenState);
+  sm.Set(mainWaitingForStartState_b);
 }
 
-State waitingForStartState_b(){
+State mainWaitingForStartState_b(){
   if (digitalRead(PIN_GO_BUTTON) == LOW){
-    sm.Set(movingToLoadedReactorState_h,movingToLoadedReactorState_b);
+    sm.Set(mainMovingToSpentReactorState_h,mainMovingToSpentReactorState_b);
+  }
+
+  if (digitalRead(PIN_BUMPER_L) == LOW){
+    sm.Set(mainShowSensorInfoState);
+  }
+}
+
+State mainShowSensorInfoState(){
+  if (sm.Timeout(100)){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(analogRead(PIN_LINE_SENSOR_L));
+    lcd.setCursor(4,0);
+    lcd.print(analogRead(PIN_LINE_SENSOR_R));
+    lcd.setCursor(8,0);
+    lcd.print(analogRead(PIN_LINE_SENSOR_CROSS));
+    lcd.setCursor(0,1);
+    lcd.print(digitalRead(PIN_BUMPER_L));
+    lcd.print(digitalRead(PIN_BUMPER_R));
+    lcd.print(digitalRead(PIN_V_SWITCH));
+    lcd.print(digitalRead(PIN_ELEVATOR_UPPER));
+    lcd.print(digitalRead(PIN_ELEVATOR_LOWER));
+    lcd.setCursor(6,1);
+    lcd.print(PIN_ELEVATOR_POT);
+    sm.Set(mainShowSensorInfoState);
+  }
+
+  if (goButton.fell()){
+    sm.Set(mainWaitingForStartState);
   }
 }
 
@@ -13,6 +45,7 @@ boolean processNavigate(){
   byte nextMove = navi.getNextAction();
   switch (nextMove){
     case FOLLOW_LINE:
+      setLineFollowStopCondition(1,0,0);
       moveSM.Set(lineFollowState);
       break;
     case TURN_90_CCW:
@@ -31,9 +64,8 @@ boolean processNavigate(){
   return false;
 }
 
-State movingToLoadedReactorState_h(){
-  boolean stopOnCrossLine = true;
-  boolean stopOnVSwitch = false;
+
+State mainMovingToSpentReactorState_h(){
   elevatorSM.Set(elevatorDownState);
   gripperSM.Set(gripperOpenState);
   if (!reactorAReplaced){
@@ -52,35 +84,59 @@ State movingToLoadedReactorState_h(){
   }
 }
 
-State movingToLoadedReactorState_b(){
+State mainMovingToSpentReactorState_b(){
   if (moveSM.Finished) {
     boolean done = processNavigate();
     if (done){
-      sm.Set(alignToReactorState_h);
+      sm.Set(mainAlignToReactorState_h,mainAlignToSpentReactorState_b);
     }
   }
 }
 
-State alignToReactorState_h(){
-  boolean stopOnCrossLine = false;
-  boolean stopOnVSwitch = true;
+/*
+Align to the reactor.
+*/
+State mainAlignToReactorState_h(){
+  setLineFollowStopCondition(0,1,1);
   moveSM.Set(lineFollowState);
 }
 
-State alignToReactorState_b(){
+State mainAlignToSpentReactorState_b(){
   if (moveSM.Finished) {
-    sm.Set(extractingRodFromReactorState_1);
+    sm.Set(mainExtractingRodFromReactorState_1);
   }
 }
 
-State extractingRodFromReactorState_1(){
+State mainAlignToEmptyReactorState_b(){
+  if (moveSM.Finished) {
+    //sm.Set(mainExtractingRodFromReactorState_1);
+    //TODO
+  }
+}
+
+/*
+Extract the rod from the reactor
+*/
+State mainExtractingRodFromReactorState_1(){
   gripperSM.Set(gripperHoldState);
+  sm.Set(mainExtractingRodFromReactorState_2);
 }
 
-State extractingRodFromReactorState_2(){
+State mainExtractingRodFromReactorState_2(){
   if (gripperSM.Finished){
-    gripperSM.Set(gripperHoldState);
+    elevatorSM.Set(elevatorUpState);
+    sm.Set(mainExtractingRodFromReactorState_3);
   }
+}
+
+State mainExtractingRodFromReactorState_3(){
+  if (elevatorSM.Finished){
+    //TODO
+  }
+}
+
+State mainTurnAroundAtSpentReactorState(){
+
 }
 
 State movingToSpentStorageState(){
