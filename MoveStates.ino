@@ -14,11 +14,11 @@ State turnLeftWaitState(){
     severe(F("Turn L timeout"));
   }
 
-  //int leftSensor = analogRead(PIN_LINE_SENSOR_L);
+  int leftSensor = analogRead(PIN_LINE_SENSOR_L);
   int rightSensor = analogRead(PIN_LINE_SENSOR_R);
 
   if (moveSM.Timeout(TURN_90_MIN_TIME) &&
-  (/*leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||*/
+  ( leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
     rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
     moveSM.Set(stopState);
   }
@@ -32,11 +32,11 @@ State turnRightWaitState(){
   }
 
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
-  //int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
 
   if (moveSM.Timeout(TURN_90_MIN_TIME) &&
-  (leftSensor > LINE_FOLLOW_TURNING_THRESHOLD /*||
-    rightSensor > LINE_FOLLOW_TURNING_THRESHOLD*/)){
+  ( leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
+    rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
     moveSM.Set(stopState);
   }
 
