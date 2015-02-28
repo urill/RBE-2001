@@ -115,6 +115,7 @@ State mainAlignToEmptyReactorState_b(){
   }
 }
 
+
 /*
 Extract the rod from the reactor
 */
@@ -132,7 +133,21 @@ State mainExtractingRodFromReactorState_2(){
 
 State mainExtractingRodFromReactorState_3(){
   if (elevatorSM.Finished){
-    //TODO
+    sm.Set(mainRetractAndTurnAround_1);
+  }
+}
+
+State mainRetractAndTurnAround_1(){
+  info("Retracting");
+  moveSM.Set(retractState);
+  sm.Set(mainRetractAndTurnAround_2);
+}
+
+State mainRetractAndTurnAround_2(){
+  if (moveSM.Finished) {
+    info("Turning around");
+    moveSM.Set(turnAroundState);
+    sm.Finish(); //TODO
   }
 }
 
