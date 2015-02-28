@@ -1,3 +1,21 @@
+State testWaitForGoButton(){
+  info("Waiting for Go button");
+  if (goButton.fell()){
+    testSM.Set(testTurnLeft_h,testTurnLeft_b);
+  }
+}
+
+State testTurnLeft_h(){
+  info("Turning Left");
+  moveSM.Set(turnLeftState);
+}
+
+State testTurnLeft_b(){
+  if (moveSM.Finished){
+    testSM.Set(testWaitForGoButton);
+  }
+}
+
 State sensorReadoutState1(){
   if (testSM.Timeout(100)){
   lcd.clear();

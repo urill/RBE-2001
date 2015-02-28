@@ -1,17 +1,28 @@
 State turnLeftState(){
-  drive.go(0,-TURN_SPEED);
+  drive.go(TURN_FORWARD_SPEED,-TURN_SPEED);
   moveSM.Set(turnWaitState);
 }
 
 State turnRightState(){
-  drive.go(0,TURN_SPEED);
+  drive.go(TURN_FORWARD_SPEED,TURN_SPEED);
   moveSM.Set(turnWaitState);
 }
 
 State turnWaitState(){
   if (moveSM.Timeout(TURN_TIMEOUT)){
     moveSM.Set(stopState);
+    severe(F("Turn 90 timeout"));
   }
+
+  int leftSensor = analogRead(PIN_LINE_SENSOR_L);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+
+  if (moveSM.Timeout(TURN_90_MIN_TIME) &&
+  (leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
+    rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
+    moveSM.Set(stopState);
+  }
+
 }
 
 State turnAroundState(){
@@ -22,12 +33,24 @@ State turnAroundState(){
 State turnAroundWaitState(){
   if (moveSM.Timeout(TURN_AROUND_TIMEOUT)){
     moveSM.Set(stopState);
+    severe(F("Turn around timeout"));
   }
+
+  int leftSensor = analogRead(PIN_LINE_SENSOR_L);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+
+  if (moveSM.Timeout(TURN_180_MIN_TIME) &&
+  (leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
+    rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
+    moveSM.Set(stopState);
+  }
+
 }
 
 boolean processCrossingLine(){
   int crossSensor = analogRead(PIN_LINE_SENSOR_CROSS);
-  if (crossSensor > LINE_FOLLOW_CROSSING_THRESHOLD){
+  if (moveSM.Timeout(LINE_FOLLOW_CROSSING_IGNORE_TIME) &&
+   crossSensor > LINE_FOLLOW_CROSSING_THRESHOLD){
     moveSM.Set(stopState);
     return true;
   }

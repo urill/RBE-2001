@@ -2,6 +2,7 @@
 #include <PID_v1.h>
 #include <SM.h>
 #include <LiquidCrystal.h>
+#include <Bounce2.h>
 #include "LineNavi.h"
 #include "DiffDrive.h"
 
@@ -21,11 +22,12 @@
 #define PIN_BUMPER_R 26
 
 #define TURN_SPEED 50
+#define TURN_FORWARD_SPEED 20
 #define LINE_FOLLOW_SPEED 50
 #define LINE_FOLLOW_APPROACHING_SPEED 20
 
-#define TURN_TIMEOUT 500
-#define TURN_AROUND_TIMEOUT 1800
+#define TURN_TIMEOUT 1000
+#define TURN_AROUND_TIMEOUT 2000
 #define LINE_FOLLOW_TIMEOUT 10000
 
 #define LINE_FOLLOW_KP 0.02
@@ -33,6 +35,11 @@
 #define LINE_FOLLOW_KD 0
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
 #define LINE_FOLLOW_CROSSING_THRESHOLD 700
+#define LINE_FOLLOW_TURNING_THRESHOLD 700
+
+#define LINE_FOLLOW_CROSSING_IGNORE_TIME 200
+#define TURN_90_MIN_TIME 800
+#define TURN_180_MIN_TIME 1600
 
 #define GRIPPER_OPEN_POSITION 90
 #define GRIPPER_HOLD_POSITION 160
@@ -63,6 +70,7 @@ Servo gripper;
 LineNavi navi;
 DiffDrive drive;
 
+Bounce goButton = Bounce();
 
 SM sm(waitingForStartState_h,waitingForStartState_b);
 SM moveSM(stopState);
@@ -83,6 +91,8 @@ boolean stopOnVSwitch;
 
 byte currentPosition = NEW_1;
 
+boolean errorFlag = false;
+
 void setup() {
   pinMode(PIN_V_SWITCH, INPUT_PULLUP);
   pinMode(PIN_GO_BUTTON, INPUT_PULLUP);
@@ -97,6 +107,9 @@ void setup() {
   pinMode(PIN_ELEVATOR_MOTOR,OUTPUT);
   pinMode(PIN_GRIPPER,OUTPUT);
 
+  goButton.attach(PIN_GO_BUTTON);
+  goButton.interval(5);
+
   Serial.begin(115200);
   lcd.begin(16,2);
   leftWheel.attach(PIN_LEFT_WHEEL);
@@ -109,6 +122,7 @@ void setup() {
 }
 
 void loop() {
+  goButton.update();
   //EXEC(sm);
   EXEC(testSM);
   EXEC(moveSM);
@@ -117,16 +131,21 @@ void loop() {
 }
 
 void verbose(String s){
+  if (errorFlag) return;
   lcd.clear();
   lcd.print(s);
 }
 
 void info(String s){
+  if (errorFlag) return;
   lcd.clear();
   lcd.print(s);
 }
 
 void severe(String s){
-  lcd.clear();
+  if (!errorFlag) {
+    lcd.clear();
+  }
+  errorFlag = true;
   lcd.print(s);
 }
