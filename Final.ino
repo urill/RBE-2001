@@ -26,20 +26,21 @@
 #define LINE_FOLLOW_SPEED 50
 #define LINE_FOLLOW_APPROACHING_SPEED 20
 
-#define TURN_TIMEOUT 1000
-#define TURN_AROUND_TIMEOUT 2000
-#define LINE_FOLLOW_TIMEOUT 10000
 
-#define LINE_FOLLOW_KP 0.02
-#define LINE_FOLLOW_KI 0.00001
+#define LINE_FOLLOW_KP 0.020
+#define LINE_FOLLOW_KI 0.005
 #define LINE_FOLLOW_KD 0
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
 #define LINE_FOLLOW_CROSSING_THRESHOLD 700
-#define LINE_FOLLOW_TURNING_THRESHOLD 700
+#define LINE_FOLLOW_TURNING_THRESHOLD 650
 
 #define LINE_FOLLOW_CROSSING_IGNORE_TIME 200
-#define TURN_90_MIN_TIME 800
-#define TURN_180_MIN_TIME 1600
+#define TURN_90_MIN_TIME 700
+#define TURN_180_MIN_TIME 1200
+
+#define TURN_TIMEOUT 1200
+#define TURN_AROUND_TIMEOUT 2000
+#define LINE_FOLLOW_TIMEOUT 10000
 
 #define GRIPPER_OPEN_POSITION 90
 #define GRIPPER_HOLD_POSITION 160
@@ -78,8 +79,10 @@ SM elevatorSM(Nop);
 SM gripperSM(Nop);
 SM navigationSM(Nop);
 
+SM testSM(testHoldRod_0);
+//SM testSM(testTurnLeft_0);
 //SM testSM(sensorReadoutState1);
-SM testSM(testFollowLine_1);
+//SM testSM(testFollowLine_1);
 //SM testSM(blahState_h,blahState_b);
 //SM testSM(testElevatorStateU_h,testElevatorStateU_b);
 
@@ -88,16 +91,21 @@ boolean reactorBReplaced = false;
 
 boolean stopOnCrossLine;
 boolean stopOnVSwitch;
+boolean stopOnBumperSwitch;
 
 byte currentPosition = NEW_1;
 
 boolean errorFlag = false;
+
+unsigned long lastLineFollowStarted;
 
 void setup() {
   pinMode(PIN_V_SWITCH, INPUT_PULLUP);
   pinMode(PIN_GO_BUTTON, INPUT_PULLUP);
   pinMode(PIN_ELEVATOR_UPPER, INPUT_PULLUP);
   pinMode(PIN_ELEVATOR_LOWER, INPUT_PULLUP);
+  pinMode(PIN_BUMPER_L, INPUT_PULLUP);
+  pinMode(PIN_BUMPER_R, INPUT_PULLUP);
   pinMode(PIN_LINE_SENSOR_L,INPUT);
   pinMode(PIN_LINE_SENSOR_R,INPUT);
   pinMode(PIN_LINE_SENSOR_CROSS,INPUT);

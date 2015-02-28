@@ -1,25 +1,42 @@
 State turnLeftState(){
   drive.go(TURN_FORWARD_SPEED,-TURN_SPEED);
-  moveSM.Set(turnWaitState);
+  moveSM.Set(turnLeftWaitState);
 }
 
 State turnRightState(){
   drive.go(TURN_FORWARD_SPEED,TURN_SPEED);
-  moveSM.Set(turnWaitState);
+  moveSM.Set(turnRightWaitState);
 }
 
-State turnWaitState(){
+State turnLeftWaitState(){
   if (moveSM.Timeout(TURN_TIMEOUT)){
     moveSM.Set(stopState);
-    severe(F("Turn 90 timeout"));
+    severe(F("Turn L timeout"));
   }
 
-  int leftSensor = analogRead(PIN_LINE_SENSOR_L);
+  //int leftSensor = analogRead(PIN_LINE_SENSOR_L);
   int rightSensor = analogRead(PIN_LINE_SENSOR_R);
 
   if (moveSM.Timeout(TURN_90_MIN_TIME) &&
-  (leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
+  (/*leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||*/
     rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
+    moveSM.Set(stopState);
+  }
+
+}
+
+State turnRightWaitState(){
+  if (moveSM.Timeout(TURN_TIMEOUT)){
+    moveSM.Set(stopState);
+    severe(F("Turn R timeout"));
+  }
+
+  int leftSensor = analogRead(PIN_LINE_SENSOR_L);
+  //int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+
+  if (moveSM.Timeout(TURN_90_MIN_TIME) &&
+  (leftSensor > LINE_FOLLOW_TURNING_THRESHOLD /*||
+    rightSensor > LINE_FOLLOW_TURNING_THRESHOLD*/)){
     moveSM.Set(stopState);
   }
 
@@ -49,7 +66,7 @@ State turnAroundWaitState(){
 
 boolean processCrossingLine(){
   int crossSensor = analogRead(PIN_LINE_SENSOR_CROSS);
-  if (moveSM.Timeout(LINE_FOLLOW_CROSSING_IGNORE_TIME) &&
+  if (millis() - lastLineFollowStarted > LINE_FOLLOW_CROSSING_IGNORE_TIME &&
    crossSensor > LINE_FOLLOW_CROSSING_THRESHOLD){
     moveSM.Set(stopState);
     return true;
@@ -65,22 +82,41 @@ boolean processVSwitch(){
   return false;
 }
 
+boolean processBumperSwitch(){
+  if (digitalRead(PIN_BUMPER_L) == LOW || digitalRead(PIN_BUMPER_R) == LOW){
+    moveSM.Set(stopState);
+    return true;
+  }
+  return false;
+}
+
 State lineFollowState(){
+  lastLineFollowStarted = millis();
+  moveSM.Set(lineFollowState_b);
+}
+
+State lineFollowState_b(){
+  if (stopOnBumperSwitch && processBumperSwitch()) return;
   if (stopOnCrossLine && processCrossingLine()) return;
   if (stopOnVSwitch && processVSwitch()) return;
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
   int rightSensor = analogRead(PIN_LINE_SENSOR_R);
   lineFollowSensorDifference = (double) (leftSensor - rightSensor);
   lineFollowPID.Compute();
-  drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
+  if (stopOnVSwitch || stopOnBumperSwitch) {
+    drive.go(LINE_FOLLOW_APPROACHING_SPEED,lineFollowSteer);
+  } else {
+    drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
+  }
   moveSM.Set(lineFollowWaitState);
 }
 
 State lineFollowWaitState(){
+  if (stopOnBumperSwitch && processBumperSwitch()) return;
   if (stopOnCrossLine && processCrossingLine()) return;
   if (stopOnVSwitch && processVSwitch()) return;
   if (moveSM.Timeout(LINE_FOLLOW_SAMPLING_TIMEOUT)){
-    moveSM.Set(lineFollowState);
+    moveSM.Set(lineFollowState_b);
   }
 }
 
