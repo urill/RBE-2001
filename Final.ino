@@ -27,7 +27,7 @@
 #define LINE_FOLLOW_APPROACHING_SPEED 20
 
 
-#define LINE_FOLLOW_KP 0.020
+#define LINE_FOLLOW_KP 0.030
 #define LINE_FOLLOW_KI 0.00005
 #define LINE_FOLLOW_KD 0
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
@@ -37,6 +37,9 @@
 #define LINE_FOLLOW_CROSSING_IGNORE_TIME 200
 #define TURN_90_MIN_TIME 700
 #define TURN_180_MIN_TIME 1200
+
+#define RETRACT_SPEED 30
+#define RETRACT_TIME 600
 
 #define TURN_TIMEOUT 1200
 #define TURN_AROUND_TIMEOUT 2000
@@ -98,6 +101,11 @@ byte currentPosition = NEW_1;
 boolean errorFlag = false;
 
 unsigned long lastLineFollowStarted;
+
+boolean bluetoothStopFlag;
+boolean bluetoothResumeFlag;
+byte bluetoothSpentAvailability;
+byte bluetoothNewAvailability;
 
 void setup() {
   pinMode(PIN_V_SWITCH, INPUT_PULLUP);

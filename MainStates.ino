@@ -151,12 +151,8 @@ State mainRetractAndTurnAround_2(){
   }
 }
 
-State mainTurnAroundAtSpentReactorState(){
-
-}
-
-State movingToSpentStorageState(){
-
+State mainMovingToSpentStorageState(){
+  
 }
 
 State insertingRodToSpentStorageState(){
