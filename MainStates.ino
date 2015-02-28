@@ -1,13 +1,13 @@
 
 State mainWaitingForStartState(){
-  info(F("Waiting for GO"));
+  info(F("Production State"));
   elevatorSM.Set(elevatorDownState);
   gripperSM.Set(gripperOpenState);
   sm.Set(mainWaitingForStartState_b);
 }
 
 State mainWaitingForStartState_b(){
-  if (digitalRead(PIN_GO_BUTTON) == LOW){
+  if (goButton.fell()){
     sm.Set(mainMovingToSpentReactorState_h,mainMovingToSpentReactorState_b);
   }
 
@@ -43,6 +43,7 @@ State mainShowSensorInfoState(){
 
 boolean processNavigate(){
   byte nextMove = navi.getNextAction();
+  //lcd.print(nextMove);
   switch (nextMove){
     case FOLLOW_LINE:
       setLineFollowStopCondition(1,0,0);

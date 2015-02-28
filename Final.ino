@@ -73,7 +73,7 @@ DiffDrive drive;
 
 Bounce goButton = Bounce();
 
-SM sm(waitingForStartState_h,waitingForStartState_b);
+SM sm(mainWaitingForStartState);
 SM moveSM(stopState);
 SM elevatorSM(Nop);
 SM gripperSM(Nop);
@@ -126,22 +126,24 @@ void setup() {
   gripper.attach(PIN_GRIPPER);
   lineFollowPID.SetOutputLimits(-100, 100);
   lineFollowPID.SetMode(AUTOMATIC);
-  lcd.print("Ready");
+  lcd.print("Setup Finished");
 }
 
 void loop() {
   goButton.update();
-  //EXEC(sm);
-  EXEC(testSM);
+  EXEC(sm);
+  //EXEC(testSM);
   EXEC(moveSM);
   EXEC(elevatorSM);
   EXEC(gripperSM);
 }
 
 void verbose(String s){
+  #ifdef VERBOSE
   if (errorFlag) return;
   lcd.clear();
   lcd.print(s);
+  #endif
 }
 
 void info(String s){
@@ -155,5 +157,11 @@ void severe(String s){
     lcd.clear();
   }
   errorFlag = true;
+  lcd.print(s);
+}
+
+void debug(String s){
+  if (errorFlag) return;
+  lcd.clear();
   lcd.print(s);
 }
