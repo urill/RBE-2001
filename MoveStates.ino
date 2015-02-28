@@ -102,6 +102,7 @@ boolean processBumperSwitch(){
 State lineFollowState(){
   verbose(F("Following Line"));
   lastLineFollowStarted = millis();
+  lineFollowPID.Reset();
   moveSM.Set(lineFollowState_b);
 }
 
