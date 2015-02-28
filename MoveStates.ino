@@ -5,11 +5,13 @@ void setLineFollowStopCondition(boolean crossLine, boolean vSwitch, boolean bump
 }
 
 State turnLeftState(){
+  verbose(F("Turn L"));
   drive.go(TURN_FORWARD_SPEED,-TURN_SPEED);
   moveSM.Set(turnLeftWaitState);
 }
 
 State turnRightState(){
+  verbose(F("Turn R"));
   drive.go(TURN_FORWARD_SPEED,TURN_SPEED);
   moveSM.Set(turnRightWaitState);
 }
@@ -49,6 +51,7 @@ State turnRightWaitState(){
 }
 
 State turnAroundState(){
+  verbose(F("Turn 180"));
   drive.go(0,TURN_SPEED);
   moveSM.Set(turnAroundWaitState);
 }
@@ -97,6 +100,7 @@ boolean processBumperSwitch(){
 }
 
 State lineFollowState(){
+  verbose(F("Following Line"));
   lastLineFollowStarted = millis();
   moveSM.Set(lineFollowState_b);
 }
@@ -127,6 +131,7 @@ State lineFollowWaitState(){
 }
 
 State stopState(){
+  verbose(F("Stop"));
   drive.stop();
   moveSM.Finish();
 }
