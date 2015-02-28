@@ -135,3 +135,15 @@ State stopState(){
   drive.stop();
   moveSM.Finish();
 }
+
+State retractState(){
+  verbose("retract");
+  drive.go(-RETRACT_SPEED,0);
+  moveSM.Set(retractWaitState);
+}
+
+State retractWaitState(){
+  if(moveSM.Timeout(RETRACT_TIME)){
+    moveSM.Set(stopState);
+  }
+}
