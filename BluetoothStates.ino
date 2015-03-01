@@ -6,7 +6,7 @@ State bluetoothReceiveState(){
 
   if (btmaster.readPacket(pkt)) {
     if (pcol.getData(pkt, data1, type)) {      // see if we can extract the type and data
-      if (pkt[4] != 0x00 || pkt[4] != BLUETOOTH_ADDRESS) return;           // if we have received a message
+      if (pkt[4] != 0x00 && pkt[4] != BLUETOOTH_ADDRESS) return;           // if we have received a message
 
       switch (type) {                          // process the message based on the type
       case STORAGE_TUBE_AVAILABILITY:                               // received a storage tube message

@@ -160,6 +160,7 @@ void loop() {
   EXEC(elevatorSM);
   EXEC(gripperSM);
   EXEC(bluetoothReceiveSM);
+  EXEC(bluetoothSendSM);
 }
 
 void verbose(String s){
