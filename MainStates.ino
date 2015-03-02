@@ -254,7 +254,6 @@ State mainAlignToSpentStorageState_2(){
 
 State mainInsertingRodToSpentStorageState(){
   if (moveSM.Finished) {
-    info("pushing");
     gripperSM.Set(gripperOpenState);
     sm.Set(mainReleaseRodToSpentStorageState);
   }
@@ -284,7 +283,7 @@ State mainPushInRodAtSpentStorageState(){
    if(elevatorSM.Finished){
     setLineFollowStopCondition(0,1,1);
     moveSM.Set(lineFollowState);
-    sm.Set(movingToNewStorageState);
+    sm.Set(mainRetractAndTurnAroundAtSpentStorageState_1);
   }
 }
 
