@@ -280,7 +280,8 @@ State mainElevatorUpAtSpentStorageState(){
 }
 
 State mainPushInRodAtSpentStorageState(){
-   if(elevatorSM.Finished){
+  if(elevatorSM.Finished){
+    info(F("pushing"));
     setLineFollowStopCondition(0,1,1);
     moveSM.Set(lineFollowState);
     sm.Set(mainRetractAndTurnAroundAtSpentStorageState_1);
@@ -288,9 +289,11 @@ State mainPushInRodAtSpentStorageState(){
 }
 
 State mainRetractAndTurnAroundAtSpentStorageState_1(){
-  info("Retracting");
-  moveSM.Set(retractState);
-  sm.Set(mainRetractAndTurnAroundAtSpentStorageState_2);
+  if(moveSM.Finished){
+    info("Retracting");
+    moveSM.Set(retractState);
+    sm.Set(mainRetractAndTurnAroundAtSpentStorageState_2);
+  }
 }
 
 State mainRetractAndTurnAroundAtSpentStorageState_2(){
@@ -307,18 +310,76 @@ State mainRetractAndTurnAroundAtSpentStorageState_3(){
   }
 }
 
-State movingToNewStorageState(){
- if(moveSM.Finished){
-  sm.Finish(); //TODO
- }
+State mainMovingToNewStorageState(){
+   if (moveSM.Finished) {
+    byte nextPosition = getClosestNewStorage();
+    if (nextPosition != 0){
+      navi.setNavigation(currentPosition, nextPosition);
+      currentPosition = nextPosition;
+      sm.Set(mainMovingToNewStorageState_2);
+      elevatorSM.Set(elevatorUpState);
+      gripperSM.Set(gripperOpenState);
+      info("Moving to New");
+    }
+  }
+}
+
+State mainMovingToNewStorageState_2(){
+  if (moveSM.Finished && elevatorSM.Finished && gripperSM.Finished) {
+    boolean done = processNavigate();
+    if (done){
+      sm.Set(mainAlignToNewStorageState);
+    }
+  }
+}
+
+State mainAlignToNewStorageState(){
+  info("Aligning to new");
+  setLineFollowStopCondition(0,1,1);
+  moveSM.Set(lineFollowState);
+  sm.Set(mainAlignToNewStorageState_2);
+}
+
+State mainAlignToNewStorageState_2(){
+  if (moveSM.Finished) {
+    sm.Set(extractingRodFromNewStorageState);
+  }
 }
 
 State extractingRodFromNewStorageState(){
-
+  gripperSM.Set(gripperHoldState);
+  sm.Set(extractingRodFromNewStorageState_2);
 }
 
-State movingToEmptyReactorState(){
+State extractingRodFromNewStorageState_2(){
+  if(gripperSM.Finished){
+    sm.Set(mainRetractAndTurnAroundAtNewStorageState_1);
+  }
+}
 
+State mainRetractAndTurnAroundAtNewStorageState_1(){
+  if(moveSM.Finished){
+    info("Retracting");
+    moveSM.Set(retractState);
+    sm.Set(mainRetractAndTurnAroundAtNewStorageState_2);
+  }
+}
+
+State mainRetractAndTurnAroundAtNewStorageState_2(){
+  if (moveSM.Finished) {
+    info("Turning around");
+    moveSM.Set(turnAroundState);
+    sm.Set(mainRetractAndTurnAroundAtNewStorageState_3);
+  }
+}
+
+State mainRetractAndTurnAroundAtNewStorageState_3(){
+  if (moveSM.Finished) {
+    sm.Set(movingToEmptyReactorState);
+  }
+}
+
+State movingToEmptyReactorState(){//TODO
 }
 
 State insertingRodToReactorState(){
