@@ -1,4 +1,3 @@
-
 State mainWaitingForStartState(){
   info(F("Production State"));
   elevatorSM.Set(elevatorDownState);
@@ -9,10 +8,15 @@ State mainWaitingForStartState(){
 State mainWaitingForStartState_b(){
   if (goButton.fell()){
     sm.Set(mainMovingToSpentReactorState_h,mainMovingToSpentReactorState_b);
+    bluetoothSendSM.Set(bluetoothSendHBState);
   }
 
   if (digitalRead(PIN_BUMPER_L) == LOW){
     sm.Set(mainShowSensorInfoState);
+  }
+
+  if (digitalRead(PIN_BUMPER_R) == LOW){
+    sm.Set(mainShowBluetoothInfoState);
   }
 }
 
@@ -34,6 +38,24 @@ State mainShowSensorInfoState(){
     lcd.setCursor(6,1);
     lcd.print(PIN_ELEVATOR_POT);
     sm.Set(mainShowSensorInfoState);
+  }
+
+  if (goButton.fell()){
+    sm.Set(mainWaitingForStartState);
+  }
+}
+
+State mainShowBluetoothInfoState(){
+  if (sm.Timeout(100)){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(bluetoothSpentAvailability, HEX);
+    lcd.setCursor(5,0);
+    lcd.print(bluetoothNewAvailability, HEX);
+    lcd.setCursor(0,1);
+    lcd.print(bluetoothStopFlag);
+    lcd.print(bluetoothResumeFlag);
+    sm.Set(mainShowBluetoothInfoState);
   }
 
   if (goButton.fell()){
