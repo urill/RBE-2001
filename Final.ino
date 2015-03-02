@@ -24,6 +24,7 @@
 #define PIN_ELEVATOR_LOWER 24
 #define PIN_BUMPER_L 25
 #define PIN_BUMPER_R 26
+#define PIN_RADIATION_LED 27
 
 #define TURN_SPEED 50
 #define TURN_FORWARD_SPEED 20
@@ -49,6 +50,7 @@
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
 #define LINE_FOLLOW_CROSSING_THRESHOLD 700
 #define LINE_FOLLOW_TURNING_THRESHOLD 900
+#define LINE_SENSOR_RIGHT_OFFSET -60
 
 #define LINE_FOLLOW_CROSSING_IGNORE_TIME 200
 #define TURN_90_MIN_TIME 700
@@ -149,6 +151,9 @@ void setup() {
   pinMode(PIN_RIGHT_WHEEL,OUTPUT);
   pinMode(PIN_ELEVATOR_MOTOR,OUTPUT);
   pinMode(PIN_GRIPPER,OUTPUT);
+  pinMode(PIN_RADIATION_LED, OUTPUT);
+
+  setRadiationLevel(0);
 
   goButton.attach(PIN_GO_BUTTON);
   goButton.interval(5);
@@ -193,9 +198,12 @@ void info(String s){
 }
 
 void severe(String s){
+  /*
   if (!errorFlag) {
     lcd.clear();
   }
+  */
+  lcd.clear();
   errorFlag = true;
   lcd.print(s);
 }
@@ -204,4 +212,14 @@ void debug(String s){
   if (errorFlag) return;
   lcd.clear();
   lcd.print(s);
+}
+
+void setRadiationLevel(byte level){
+  radiationLevel = level;
+  if (level == CARRYING_SPENT_FUEL_ROD ||
+    level == CARRYING_NEW_FUEL_ROD){
+      digitalWrite(PIN_RADIATION_LED,HIGH);
+  } else {
+    digitalWrite(PIN_RADIATION_LED,LOW);
+  }
 }

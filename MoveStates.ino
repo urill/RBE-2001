@@ -23,7 +23,7 @@ State turnLeftWaitState(){
   }
 
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
-  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R) + LINE_SENSOR_RIGHT_OFFSET;
 
   if (moveSM.Timeout(TURN_90_MIN_TIME) &&
   ( leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
@@ -40,7 +40,7 @@ State turnRightWaitState(){
   }
 
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
-  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R) + LINE_SENSOR_RIGHT_OFFSET;
 
   if (moveSM.Timeout(TURN_90_MIN_TIME) &&
   ( leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
@@ -63,7 +63,7 @@ State turnAroundWaitState(){
   }
 
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
-  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R) + LINE_SENSOR_RIGHT_OFFSET;
 
   if (moveSM.Timeout(TURN_180_MIN_TIME) &&
   (leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
@@ -116,7 +116,7 @@ State lineFollowState_b(){
   if (stopOnCrossLine && processCrossingLine()) return;
   if (stopOnVSwitch && processVSwitch()) return;
   int leftSensor = analogRead(PIN_LINE_SENSOR_L);
-  int rightSensor = analogRead(PIN_LINE_SENSOR_R);
+  int rightSensor = analogRead(PIN_LINE_SENSOR_R) + LINE_SENSOR_RIGHT_OFFSET;
   lineFollowSensorDifference = (double) (leftSensor - rightSensor);
   lineFollowPID.Compute();
   if (stopOnVSwitch || stopOnBumperSwitch) {

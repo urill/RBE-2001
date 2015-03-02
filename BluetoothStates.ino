@@ -50,14 +50,16 @@ State BluetoothSendWaitState1(){
 }
 
 State bluetoothSendRadiationLevelState(){
-  byte pkt[10];                                // allocate memory for the bytes in the packet
-  int sz;                                      // holds the size of the message (in bytes)
-  byte type;                                   // hold the message type id
-  byte data1[3];
-  pcol.setDst(0x00);			       // this will be a broadcast message
-  data1[0] = radiationLevel;                           // indicate a new fuel rod
-  sz = pcol.createPkt(RADIATION_ALERT, data1, pkt);     // create a packet using the radiation alert type ID (1 byte of data used this time)
-  btmaster.sendPkt(pkt, sz);                 // send to the field computer
+  if (radiationLevel != 0){
+    byte pkt[10];                                // allocate memory for the bytes in the packet
+    int sz;                                      // holds the size of the message (in bytes)
+    byte type;                                   // hold the message type id
+    byte data1[3];
+    pcol.setDst(0x00);			       // this will be a broadcast message
+    data1[0] = radiationLevel;                           // indicate a new fuel rod
+    sz = pcol.createPkt(RADIATION_ALERT, data1, pkt);     // create a packet using the radiation alert type ID (1 byte of data used this time)
+    btmaster.sendPkt(pkt, sz);                 // send to the field computer
+  }
   bluetoothSendSM.Set(BluetoothSendWaitState2);
 }
 

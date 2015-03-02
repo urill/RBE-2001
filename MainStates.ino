@@ -148,6 +148,7 @@ State mainExtractingRodFromReactorState_1(){
 
 State mainExtractingRodFromReactorState_2(){
   if (gripperSM.Finished){
+    setRadiationLevel(CARRYING_SPENT_FUEL_ROD);
     elevatorSM.Set(elevatorUpState);
     sm.Set(mainExtractingRodFromReactorState_3);
   }
@@ -181,15 +182,15 @@ State mainRetractAndTurnAroundAtSpentReactorState_3(){
 
 byte getClosestSpentStorage(){
     if (currentPosition == REACTOR_A){
-      if (bluetoothSpentAvailability & SPENT_4_MASK) return SPENT_4;
-      if (bluetoothSpentAvailability & SPENT_3_MASK) return SPENT_3;
-      if (bluetoothSpentAvailability & SPENT_2_MASK) return SPENT_2;
-      if (bluetoothSpentAvailability & SPENT_1_MASK) return SPENT_1;
+      if (bluetoothSpentAvailability ^ SPENT_4_MASK) return SPENT_4;
+      if (bluetoothSpentAvailability ^ SPENT_3_MASK) return SPENT_3;
+      if (bluetoothSpentAvailability ^ SPENT_2_MASK) return SPENT_2;
+      if (bluetoothSpentAvailability ^ SPENT_1_MASK) return SPENT_1;
     } else if (currentPosition == REACTOR_B){
-      if (bluetoothSpentAvailability & SPENT_1_MASK) return SPENT_1;
-      if (bluetoothSpentAvailability & SPENT_2_MASK) return SPENT_2;
-      if (bluetoothSpentAvailability & SPENT_3_MASK) return SPENT_3;
-      if (bluetoothSpentAvailability & SPENT_4_MASK) return SPENT_4;
+      if (bluetoothSpentAvailability ^ SPENT_1_MASK) return SPENT_1;
+      if (bluetoothSpentAvailability ^ SPENT_2_MASK) return SPENT_2;
+      if (bluetoothSpentAvailability ^ SPENT_3_MASK) return SPENT_3;
+      if (bluetoothSpentAvailability ^ SPENT_4_MASK) return SPENT_4;
     } else {
       severe("unexpected position");
     }
@@ -208,7 +209,8 @@ byte getClosestNewStorage(){
     } else if (currentPosition == SPENT_4){
       if (bluetoothNewAvailability & NEW_1_MASK) return NEW_1;
     } else {
-      severe("unexpected position");
+      severe("u/p");
+      lcd.print(currentPosition);
     }
     if (bluetoothNewAvailability & NEW_1_MASK) return NEW_1;
     if (bluetoothNewAvailability & NEW_2_MASK) return NEW_2;
@@ -290,6 +292,7 @@ State mainPushInRodAtSpentStorageState(){
 
 State mainRetractAndTurnAroundAtSpentStorageState_1(){
   if(moveSM.Finished){
+    setRadiationLevel(0);
     info("Retracting");
     moveSM.Set(retractState);
     sm.Set(mainRetractAndTurnAroundAtSpentStorageState_2);
@@ -348,6 +351,7 @@ State mainAlignToNewStorageState_2(){
 
 State extractingRodFromNewStorageState(){
   gripperSM.Set(gripperHoldState);
+  setRadiationLevel(CARRYING_NEW_FUEL_ROD);
   sm.Set(extractingRodFromNewStorageState_2);
 }
 
