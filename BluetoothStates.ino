@@ -5,6 +5,7 @@ State bluetoothReceiveState(){
   byte data1[10];
 
   if (btmaster.readPacket(pkt)) {
+    bluetoothConnected = true;
     if (pcol.getData(pkt, data1, type)) {      // see if we can extract the type and data
       if (pkt[4] != 0x00 && pkt[4] != BLUETOOTH_ADDRESS) return;           // if we have received a message
 
@@ -63,5 +64,16 @@ State bluetoothSendRadiationLevelState(){
 State BluetoothSendWaitState2(){
   if (bluetoothSendSM.Timeout(1500)){
     bluetoothSendSM.Set(bluetoothSendHBState);
+  }
+}
+
+State bluetoothSendWaitStartState(){
+  if (bluetoothSendSM.Timeout(500)){
+    if (bluetoothConnected){
+      info(F("BT connected"));
+      bluetoothSendSM.Set(bluetoothSendHBState);
+    } else {
+      bluetoothSendSM.Set(bluetoothSendWaitStartState);
+    }
   }
 }

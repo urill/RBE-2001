@@ -8,7 +8,7 @@ State mainWaitingForStartState(){
 State mainWaitingForStartState_b(){
   if (goButton.fell()){
     sm.Set(mainMovingToSpentReactorState_h,mainMovingToSpentReactorState_b);
-    bluetoothSendSM.Set(bluetoothSendHBState);
+    //bluetoothSendSM.Set(bluetoothSendHBState);
   }
 
   if (digitalRead(PIN_BUMPER_L) == LOW){
@@ -198,6 +198,26 @@ byte getClosestSpentStorage(){
     return 0;
 }
 
+byte getClosestNewStorage(){
+    if (currentPosition == SPENT_1){
+      if (bluetoothNewAvailability & NEW_4_MASK) return NEW_1;
+    } else if (currentPosition == SPENT_2){
+      if (bluetoothNewAvailability & NEW_3_MASK) return NEW_2;
+    } else if (currentPosition == SPENT_3){
+      if (bluetoothNewAvailability & NEW_2_MASK) return NEW_2;
+    } else if (currentPosition == SPENT_4){
+      if (bluetoothNewAvailability & NEW_1_MASK) return NEW_1;
+    } else {
+      severe("unexpected position");
+    }
+    if (bluetoothNewAvailability & NEW_1_MASK) return NEW_1;
+    if (bluetoothNewAvailability & NEW_2_MASK) return NEW_2;
+    if (bluetoothNewAvailability & NEW_3_MASK) return NEW_3;
+    if (bluetoothNewAvailability & NEW_4_MASK) return NEW_4;
+    info("no storage available");
+    return 0;
+}
+
 State mainMovingToSpentStorageState(){
    if (moveSM.Finished) {
     byte nextPosition = getClosestSpentStorage();
@@ -220,8 +240,10 @@ State mainMovingToSpentStorageState_2(){
 }
 
 State mainAlignToSpentStorageState(){
+  info("Aligning to spent");
   setLineFollowStopCondition(0,1,1);
   moveSM.Set(lineFollowState);
+  sm.Set(mainAlignToSpentStorageState_2);
 }
 
 State mainAlignToSpentStorageState_2(){
@@ -232,6 +254,7 @@ State mainAlignToSpentStorageState_2(){
 
 State mainInsertingRodToSpentStorageState(){
   if (moveSM.Finished) {
+    info("pushing");
     gripperSM.Set(gripperOpenState);
     sm.Set(mainReleaseRodToSpentStorageState);
   }

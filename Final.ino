@@ -35,8 +35,8 @@
 #define LINE_FOLLOW_KI 0.00005
 #define LINE_FOLLOW_KD 0
 
-#define LINE_FOLLOW_SLOW_KP 0.020
-#define LINE_FOLLOW_SLOW_KI 0.00002
+#define LINE_FOLLOW_SLOW_KP 0.010
+#define LINE_FOLLOW_SLOW_KI 0.00001
 #define LINE_FOLLOW_SLOW_KD 0
 
 /*
@@ -100,7 +100,7 @@ SM elevatorSM(Nop);
 SM gripperSM(Nop);
 SM navigationSM(Nop);
 SM bluetoothReceiveSM(bluetoothReceiveState);
-SM bluetoothSendSM(Nop);
+SM bluetoothSendSM(bluetoothSendWaitStartState);
 
 SM testSM(testHoldRod_0);
 //SM testSM(testTurnLeft_0);
@@ -131,6 +131,8 @@ boolean bluetoothResumeFlag;
 byte bluetoothSpentAvailability;
 byte bluetoothNewAvailability;
 byte radiationLevel;
+
+boolean bluetoothConnected;
 
 void setup() {
   pinMode(PIN_V_SWITCH, INPUT_PULLUP);
