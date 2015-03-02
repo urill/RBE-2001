@@ -9,15 +9,10 @@ State mainWaitingForStartState(){
 State mainWaitingForStartState_b(){
   if (goButton.fell()){
     sm.Set(mainMovingToSpentReactorState_h,mainMovingToSpentReactorState_b);
-    bluetoothSendSM.Set(bluetoothSendHBState);
   }
 
   if (digitalRead(PIN_BUMPER_L) == LOW){
     sm.Set(mainShowSensorInfoState);
-  }
-
-  if (digitalRead(PIN_BUMPER_R) == LOW){
-    sm.Set(mainShowBluetoothInfoState);
   }
 }
 
@@ -39,24 +34,6 @@ State mainShowSensorInfoState(){
     lcd.setCursor(6,1);
     lcd.print(PIN_ELEVATOR_POT);
     sm.Set(mainShowSensorInfoState);
-  }
-
-  if (goButton.fell()){
-    sm.Set(mainWaitingForStartState);
-  }
-}
-
-State mainShowBluetoothInfoState(){
-  if (sm.Timeout(100)){
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print(bluetoothSpentAvailability, HEX);
-    lcd.setCursor(5,0);
-    lcd.print(bluetoothNewAvailability, HEX);
-    lcd.setCursor(0,1);
-    lcd.print(bluetoothStopFlag);
-    lcd.print(bluetoothResumeFlag);
-    sm.Set(mainShowBluetoothInfoState);
   }
 
   if (goButton.fell()){
@@ -170,20 +147,67 @@ State mainRetractAndTurnAround_2(){
   if (moveSM.Finished) {
     info("Turning around");
     moveSM.Set(turnAroundState);
-    sm.Finish(); //TODO
+    sm.Set(mainMovingToSpentStorageState); // changed from   sm.Finish(); //TODO
+    
   }
 }
 
 State mainMovingToSpentStorageState(){
+  /*CODE THAT ALLOWS TESTING UNTIL BT IS DONE
+  */
+   if (moveSM.Finished) {
+    info("Moving to Spent");
+    
+    setLineFollowStopCondition(1,0,0);
+    moveSM.Set(lineFollowState);
+    
+    moveSM.Set(turnLeftWaitState);
+    
+    setLineFollowStopCondition(0,1,1);
+    moveSM.Set(lineFollowState);
+    
+    sm.Set(mainInsertingRodToSpentStorageState);
+    }
+}
+State mainInsertingRodToSpentStorageState(){
+  if (moveSM.Finished) {
+    gripperSM.Set(gripperOpenState);
+    sm.Set(mainReleaseRodState);
+  }
+}
+State mainReleaseRodState(){
+  if(gripperSM.Finished){
+    elevatorSM.Set(elevatorDownState);
+    sm.Set(mainBackup);
+  }
+}
+State mainBackup(){
+  if(elevatorSM.Finished){
+    moveSM.Set(retractState);
+    sm.Set(mainElevatorUp);
 
+  }
+}
+State mainElevatorUp(){
+  if(moveSM.Finished){
+   gripperSM.Set(gripperCloseState);
+   elevatorSM.Set(elevatorUpState);
+   sm.Set(mainPushInRod);    
+  }
 }
 
-State insertingRodToSpentStorageState(){
-
-}
+State mainPushInRod(){
+   if(elevatorSM.Finished){
+    setLineFollowStopCondition(0,1,1);
+    moveSM.Set(lineFollowState);
+    sm.Set(movingToNewStorageState);    
+  }
+ }
 
 State movingToNewStorageState(){
-
+ if(moveSM.Finished){
+  sm.Finish(); //TODO
+ }
 }
 
 State extractingRodFromNewStorageState(){

@@ -148,3 +148,15 @@ State retractWaitState(){
     moveSM.Set(stopState);
   }
 }
+
+State insertState(){
+  verbose("retract");
+  drive.go(RETRACT_SPEED,0);
+  moveSM.Set(retractWaitState);
+}
+
+State insertWaitState(){
+  if(moveSM.Timeout(RETRACT_TIME)){
+    moveSM.Set(stopState);
+  }
+}
