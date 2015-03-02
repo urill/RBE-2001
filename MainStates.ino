@@ -36,7 +36,7 @@ State mainShowSensorInfoState(){
     lcd.print(digitalRead(PIN_ELEVATOR_UPPER));
     lcd.print(digitalRead(PIN_ELEVATOR_LOWER));
     lcd.setCursor(6,1);
-    lcd.print(PIN_ELEVATOR_POT);
+    lcd.print(analogRead(PIN_ELEVATOR_POT));
     sm.Set(mainShowSensorInfoState);
   }
 
@@ -309,7 +309,7 @@ State mainRetractAndTurnAroundAtSpentStorageState_2(){
 
 State mainRetractAndTurnAroundAtSpentStorageState_3(){
   if (moveSM.Finished) {
-    sm.Set(mainMovingToSpentStorageState);
+    sm.Set(mainMovingToNewStorageState);
   }
 }
 
