@@ -103,6 +103,11 @@ State lineFollowState(){
   verbose(F("Following Line"));
   lastLineFollowStarted = millis();
   lineFollowPID.Reset();
+  if (stopOnVSwitch || stopOnBumperSwitch) {
+    lineFollowPID.SetTunings(LINE_FOLLOW_SLOW_KP,LINE_FOLLOW_SLOW_KI,LINE_FOLLOW_SLOW_KD);
+  } else {
+    lineFollowPID.SetTunings(LINE_FOLLOW_KP,LINE_FOLLOW_KI,LINE_FOLLOW_KD);
+  }
   moveSM.Set(lineFollowState_b);
 }
 

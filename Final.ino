@@ -34,6 +34,11 @@
 #define LINE_FOLLOW_KP 0.030
 #define LINE_FOLLOW_KI 0.00005
 #define LINE_FOLLOW_KD 0
+
+#define LINE_FOLLOW_SLOW_KP 0.020
+#define LINE_FOLLOW_SLOW_KI 0.00002
+#define LINE_FOLLOW_SLOW_KD 0
+
 /*
 //TEST PID VALUES
 #define LINE_FOLLOW_KP 0.030
@@ -155,6 +160,7 @@ void setup() {
   elevatorMotor.attach(PIN_ELEVATOR_MOTOR,1000,2000);
   gripper.attach(PIN_GRIPPER);
   lineFollowPID.SetOutputLimits(-100, 100);
+  lineFollowPID.SetSampleTime(1);
   lineFollowPID.SetMode(AUTOMATIC);
   lcd.print("Setup Finished");
 }
