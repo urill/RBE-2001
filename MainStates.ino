@@ -68,7 +68,7 @@ boolean processNavigate(){
   //lcd.print(nextMove);
   switch (nextMove){
     case FOLLOW_LINE:
-      setLineFollowStopCondition(1,1,0); // was (1,0,0)
+      setLineFollowStopCondition(1,0,0); // was (1,0,0)
       moveSM.Set(lineFollowState);
       break;
     case TURN_90_CCW:
