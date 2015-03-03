@@ -95,14 +95,14 @@ State mainMovingToSpentReactorState_h(){
     navi.setNavigation(currentPosition, REACTOR_A);
     info(F("Heading R A"));
     currentPosition = REACTOR_A;
-    reactorAReplaced = true;
+    //reactorAReplaced = true;
     return;
   }
   else if (!reactorBReplaced){
     navi.setNavigation(currentPosition, REACTOR_B);
     info(F("Heading R B"));
     currentPosition = REACTOR_B;
-    reactorBReplaced = true;
+    //reactorBReplaced = true;
     return;
   }
 }
@@ -120,7 +120,8 @@ State mainMovingToSpentReactorState_b(){
 Align to the reactor.
 */
 State mainAlignToReactorState_h(){
-  setLineFollowStopCondition(0,1,1);
+  info(F("Aligning to Reactor"));
+  setLineFollowStopCondition(0,1,0);
   moveSM.Set(lineFollowState);
 }
 
@@ -130,12 +131,7 @@ State mainAlignToSpentReactorState_b(){
   }
 }
 
-State mainAlignToEmptyReactorState_b(){
-  if (moveSM.Finished) {
-    //sm.Set(mainExtractingRodFromReactorState_1);
-    //TODO
-  }
-}
+
 
 
 /*
@@ -201,9 +197,9 @@ byte getClosestSpentStorage(){
 
 byte getClosestNewStorage(){
     if (currentPosition == SPENT_1){
-      if (bluetoothNewAvailability & NEW_4_MASK) return NEW_1;
+      if (bluetoothNewAvailability & NEW_4_MASK) return NEW_4;
     } else if (currentPosition == SPENT_2){
-      if (bluetoothNewAvailability & NEW_3_MASK) return NEW_2;
+      if (bluetoothNewAvailability & NEW_3_MASK) return NEW_3;
     } else if (currentPosition == SPENT_3){
       if (bluetoothNewAvailability & NEW_2_MASK) return NEW_2;
     } else if (currentPosition == SPENT_4){
@@ -243,25 +239,26 @@ State mainMovingToSpentStorageState_2(){
 
 State mainAlignToSpentStorageState(){
   info("Aligning to spent");
-  setLineFollowStopCondition(0,1,1);
+  setLineFollowStopCondition(0,1,0);
   moveSM.Set(lineFollowState);
   sm.Set(mainAlignToSpentStorageState_2);
 }
 
 State mainAlignToSpentStorageState_2(){
   if (moveSM.Finished) {
+    moveSM.Set(zombieState);
     sm.Set(mainInsertingRodToSpentStorageState);
   }
 }
 
 State mainInsertingRodToSpentStorageState(){
-  if (moveSM.Finished) {
+  if (moveSM.Finished && sm.Timeout(500)) {
     gripperSM.Set(gripperOpenState);
     sm.Set(mainReleaseRodToSpentStorageState);
   }
 }
 State mainReleaseRodToSpentStorageState(){
-  if(gripperSM.Finished){
+  if(gripperSM.Finished && sm.Timeout(500)){
     elevatorSM.Set(elevatorDownState);
     sm.Set(mainBackupAtSpentStorageState);
   }
@@ -379,13 +376,46 @@ State mainRetractAndTurnAroundAtNewStorageState_2(){
 
 State mainRetractAndTurnAroundAtNewStorageState_3(){
   if (moveSM.Finished) {
-    sm.Set(movingToEmptyReactorState);
+    sm.Set(mainMovingToEmptyReactorState_h,mainMovingToEmptyReactorState_b);
   }
 }
 
-State movingToEmptyReactorState(){//TODO
+State mainMovingToEmptyReactorState_h(){
+  elevatorSM.Set(elevatorUpState);
+  gripperSM.Set(gripperHoldState);
+  if (!reactorAReplaced){
+    navi.setNavigation(currentPosition, REACTOR_A);
+    info(F("Heading R A"));
+    currentPosition = REACTOR_A;
+    reactorAReplaced = true;
+    return;
+  }
+  else if (!reactorBReplaced){
+    navi.setNavigation(currentPosition, REACTOR_B);
+    info(F("Heading R B"));
+    currentPosition = REACTOR_B;
+    reactorBReplaced = true;
+    return;
+  }
 }
 
-State insertingRodToReactorState(){
+State mainMovingToEmptyReactorState_b(){
+  if (moveSM.Finished) {
+    boolean done = processNavigate();
+    if (done){
+      sm.Set(mainAlignToReactorState_h,mainAlignToEmptyReactorState_b);
+    }
+  }
+}
 
+
+State mainAlignToEmptyReactorState_b(){
+  if (moveSM.Finished) {
+    sm.Set(mainInsertingRodToReactorState);
+  }
+}
+
+State mainInsertingRodToReactorState(){
+  elevatorSM.Set(elevatorDownState);
+  sm.Finish();
 }

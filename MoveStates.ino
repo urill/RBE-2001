@@ -165,3 +165,8 @@ State insertWaitState(){
     moveSM.Set(stopState);
   }
 }
+
+State zombieState(){
+  drive.go(20,0);
+  moveSM.Finish();
+}
