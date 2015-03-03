@@ -167,7 +167,7 @@ State stopState(){
 
 State retractState(){
   verbose("retract");
-  drive.go(-RETRACT_SPEED,0);
+  drive.go(-RETRACT_SPEED,RETRACT_STEER);
   moveSM.Set(retractWaitState);
 }
 
