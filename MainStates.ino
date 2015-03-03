@@ -290,7 +290,7 @@ State mainPushInRodAtSpentStorageState(){
 State mainCheckSpentRodInsertionState(){
   if (moveSM.Finished){
     sm.Set(mainRetractAndTurnAroundAtSpentStorageState_1);
-  } else if (sm.Timeout(1000)){
+  } else if (sm.Timeout(4000)){
     sm.Set(mainBackupAtSpentStorageState);
   }
 }
