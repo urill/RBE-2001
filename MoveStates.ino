@@ -177,7 +177,7 @@ State backupUntilVSwitchOpen(){
 }
 
 State backupUntilVSwitchOpen_b(){
-  if (digitalRead(PIN_V_SWITCH) == HIGH){
+  if (digitalRead(PIN_V_SWITCH) == HIGH && moveSM.Timeout(2000)){
     moveSM.Set(stopState);
   }
 }

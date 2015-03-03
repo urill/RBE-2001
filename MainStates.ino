@@ -178,15 +178,15 @@ State mainRetractAndTurnAroundAtSpentReactorState_3(){
 
 byte getClosestSpentStorage(){
     if (currentPosition == REACTOR_A){
-      if (bluetoothSpentAvailability ^ SPENT_4_MASK) return SPENT_4;
-      if (bluetoothSpentAvailability ^ SPENT_3_MASK) return SPENT_3;
-      if (bluetoothSpentAvailability ^ SPENT_2_MASK) return SPENT_2;
-      if (bluetoothSpentAvailability ^ SPENT_1_MASK) return SPENT_1;
+      if (!(bluetoothSpentAvailability & SPENT_4_MASK)) return SPENT_4;
+      if (!(bluetoothSpentAvailability & SPENT_3_MASK)) return SPENT_3;
+      if (!(bluetoothSpentAvailability & SPENT_2_MASK)) return SPENT_2;
+      if (!(bluetoothSpentAvailability & SPENT_1_MASK)) return SPENT_1;
     } else if (currentPosition == REACTOR_B){
-      if (bluetoothSpentAvailability ^ SPENT_1_MASK) return SPENT_1;
-      if (bluetoothSpentAvailability ^ SPENT_2_MASK) return SPENT_2;
-      if (bluetoothSpentAvailability ^ SPENT_3_MASK) return SPENT_3;
-      if (bluetoothSpentAvailability ^ SPENT_4_MASK) return SPENT_4;
+      if (!(bluetoothSpentAvailability & SPENT_1_MASK)) return SPENT_1;
+      if (!(bluetoothSpentAvailability & SPENT_2_MASK)) return SPENT_2;
+      if (!(bluetoothSpentAvailability & SPENT_3_MASK)) return SPENT_3;
+      if (!(bluetoothSpentAvailability & SPENT_4_MASK)) return SPENT_4;
     } else {
       severe("unexpected position");
     }

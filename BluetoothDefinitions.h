@@ -16,7 +16,7 @@
 #define NEW_3_MASK 0b0100
 #define NEW_4_MASK 0b1000
 
-#define SPENT_1_MASK 0b0001
-#define SPENT_2_MASK 0b0010
-#define SPENT_3_MASK 0b0100
-#define SPENT_4_MASK 0b1000
+#define SPENT_1_MASK 0b1000
+#define SPENT_2_MASK 0b0100
+#define SPENT_3_MASK 0b0010
+#define SPENT_4_MASK 0b0001
