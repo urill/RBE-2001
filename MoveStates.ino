@@ -134,6 +134,23 @@ State lineFollowWaitState(){
   if (moveSM.Timeout(LINE_FOLLOW_SAMPLING_TIMEOUT)){
     moveSM.Set(lineFollowState_b);
   }
+  if (bluetoothStopFlag){
+    moveSM.Set(lineFollowRemoteStopState);
+    bluetoothStopFlag = false;
+  }
+}
+
+State lineFollowRemoteStopState(){
+  drive.go(0,0);
+  info(F("Stop button pressed"));
+  moveSM.Set(lineFollowRemoteStopState_2);
+}
+
+State lineFollowRemoteStopState_2(){
+  if (bluetoothResumeFlag){
+    moveSM.Set(lineFollowState);
+    bluetoothResumeFlag = false;
+  }
 }
 
 State stopState(){

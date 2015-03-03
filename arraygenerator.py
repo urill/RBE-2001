@@ -36,6 +36,8 @@ r[3][9] = r[4][8] = r[5][7] = [5,3,5,1,5,0,0]
 r[3][8] = r[4][7] = [5,3,5,5,1,5,0]
 r[3][7] = [5,3,5,5,5,1,5]
 
+r[1][2] = r[2][1] = [5,5,5,5,5,0,0]
+
 out = pprint.pformat(r).replace('[','{').replace(']','}')
 
 out = '#include "Arduino.h"\nconst byte ROUTES[11][11][7] PROGMEM=\n' + out + ';'
