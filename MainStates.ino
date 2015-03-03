@@ -378,7 +378,7 @@ State extractingRodFromNewStorageState_4(){
 State extractingRodFromNewStorageState_5(){
   if (moveSM.Finished){
     gripperSM.Set(gripperHoldState);
-    sm.Set(extractingRodFromNewStorageState_6)
+    sm.Set(extractingRodFromNewStorageState_6);
   }
 }
 
