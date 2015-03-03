@@ -42,18 +42,18 @@
 
 #define LINE_FOLLOW_SAMPLING_TIMEOUT 50
 #define LINE_FOLLOW_CROSSING_THRESHOLD 700
-#define LINE_FOLLOW_TURNING_THRESHOLD 900
+#define LINE_FOLLOW_TURNING_THRESHOLD 800
 #define LINE_SENSOR_RIGHT_OFFSET -60
 
 #define LINE_FOLLOW_CROSSING_IGNORE_TIME 200
-#define TURN_90_MIN_TIME 500
-#define TURN_180_MIN_TIME 2400
+#define TURN_90_MIN_TIME 600
+#define TURN_180_MIN_TIME 2200 //chaanged with fresh battery origonally 2400
 
 #define RETRACT_SPEED 30
 #define RETRACT_TIME 600
 
 #define TURN_TIMEOUT 2400
-#define TURN_AROUND_TIMEOUT 4800
+#define TURN_AROUND_TIMEOUT 4800 
 #define LINE_FOLLOW_TIMEOUT 10000
 
 #define GRIPPER_OPEN_POSITION 90
@@ -77,7 +77,7 @@
 LiquidCrystal lcd(40,41,42,43,44,45);
 
 double lineFollowSensorDifference, lineFollowSteer;
-PID lineFollowPID(&lineFollowSensorDifference, &lineFollowSteer, 0 ,LINE_FOLLOW_KP,LINE_FOLLOW_KI,LINE_FOLLOW_KD, DIRECT);
+PID lineFollowPID(&lineFollowSensorDifference, &lineFollowSteer, 0 ,0,0,0, DIRECT); //LINE_FOLLOW_KP,LINE_FOLLOW_KI,LINE_FOLLOW_KD,
 
 Servo leftWheel;
 Servo rightWheel;
