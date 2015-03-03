@@ -446,5 +446,46 @@ State mainAlignToEmptyReactorState_b(){
 
 State mainInsertingRodToReactorState(){
   elevatorSM.Set(elevatorDownState);
-  sm.Finish();
+  sm.Set(mainInsertingRodToReactorState_2);
+}
+
+State mainInsertingRodToReactorState_2(){
+  if (elevatorSM.Finished){
+    gripperSM.Set(gripperOpenState);
+    sm.Set(mainInsertingRodToReactorState_3);
+  }
+}
+
+State mainInsertingRodToReactorState_3(){
+  if (gripperSM.Finished){
+    sm.Set(mainRetractAndTurnAroundAtReplacedReactorState_1);
+  }
+}
+
+State mainRetractAndTurnAroundAtReplacedReactorState_1(){
+  if(moveSM.Finished){
+    info("Retracting");
+    moveSM.Set(retractState);
+    sm.Set(mainRetractAndTurnAroundAtReplacedReactorState_2);
+  }
+}
+
+State mainRetractAndTurnAroundAtReplacedReactorState_2(){
+  if (moveSM.Finished) {
+    info("Turning around");
+    moveSM.Set(turnAroundState);
+    sm.Set(mainRetractAndTurnAroundAtReplacedReactorState_3);
+  }
+}
+
+State mainRetractAndTurnAroundAtReplacedReactorState_3(){
+  if (moveSM.Finished) {
+    if (currentPosition == REACTOR_A) reactorAReplaced = true;
+    if (currentPosition == REACTOR_B) reactorBReplaced = true;
+    if (reactorAReplaced && reactorBReplaced){
+      sm.Finish();
+    } else {
+      sm.Set(mainMovingToSpentReactorState_h,mainMovingToSpentReactorState_b);
+    }
+  }
 }
