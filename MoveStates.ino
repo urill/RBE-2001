@@ -28,9 +28,15 @@ State turnLeftWaitState(){
   if (moveSM.Timeout(TURN_90_MIN_TIME) &&
   ( leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
     rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
-    moveSM.Set(stopState);
+    moveSM.Set(turnDelayStopState);
   }
 
+}
+
+State turnDelayStopState(){
+  if (moveSM.Timeout(TURN_STOP_DELAY)){
+    moveSM.Set(stopState);
+  }
 }
 
 State turnRightWaitState(){
@@ -45,7 +51,7 @@ State turnRightWaitState(){
   if (moveSM.Timeout(TURN_90_MIN_TIME) &&
   ( leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
     rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
-    moveSM.Set(stopState);
+    moveSM.Set(turnDelayStopState);
   }
 
 }
@@ -68,7 +74,7 @@ State turnAroundWaitState(){
   if (moveSM.Timeout(TURN_180_MIN_TIME) &&
   (leftSensor > LINE_FOLLOW_TURNING_THRESHOLD ||
     rightSensor > LINE_FOLLOW_TURNING_THRESHOLD)){
-    moveSM.Set(stopState);
+    moveSM.Set(turnDelayStopState);
   }
 
 }

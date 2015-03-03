@@ -49,11 +49,13 @@
 #define TURN_90_MIN_TIME 600
 #define TURN_180_MIN_TIME 2200 //chaanged with fresh battery origonally 2400
 
+#define TURN_STOP_DELAY 200 
+
 #define RETRACT_SPEED 30
 #define RETRACT_TIME 600
 
 #define TURN_TIMEOUT 2400
-#define TURN_AROUND_TIMEOUT 4800 
+#define TURN_AROUND_TIMEOUT 4800
 #define LINE_FOLLOW_TIMEOUT 10000
 
 #define GRIPPER_OPEN_POSITION 90
