@@ -170,3 +170,14 @@ State zombieState(){
   drive.go(20,0);
   moveSM.Finish();
 }
+
+State backupUntilVSwitchOpen(){
+  drive.go(-15,0);
+  moveSM.Set(backupUntilVSwitchOpen_b);
+}
+
+State backupUntilVSwitchOpen_b(){
+  if (digitalRead(PIN_V_SWITCH) == HIGH){
+    moveSM.Set(stopState);
+  }
+}

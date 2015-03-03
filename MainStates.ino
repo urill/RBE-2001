@@ -354,10 +354,39 @@ State extractingRodFromNewStorageState(){
 
 State extractingRodFromNewStorageState_2(){
   if(gripperSM.Finished){
-    sm.Set(mainRetractAndTurnAroundAtNewStorageState_1);
+    moveSM.Set(backupUntilVSwitchOpen);
+    sm.Set(extractingRodFromNewStorageState_3);
   }
 }
 
+
+State extractingRodFromNewStorageState_3(){
+  if (moveSM.Finished){
+    gripperSM.Set(gripperOpenState);
+    sm.Set(extractingRodFromNewStorageState_4);
+  }
+}
+
+State extractingRodFromNewStorageState_4(){
+  if(gripperSM.Finished){
+    setLineFollowStopCondition(0,1,1);
+    moveSM.Set(lineFollowState);
+    sm.Set(extractingRodFromNewStorageState_5);
+  }
+}
+
+State extractingRodFromNewStorageState_5(){
+  if (moveSM.Finished){
+    gripperSM.Set(gripperHoldState);
+    sm.Set(extractingRodFromNewStorageState_6)
+  }
+}
+
+State extractingRodFromNewStorageState_6(){
+  if(gripperSM.Finished){
+    sm.Set(mainRetractAndTurnAroundAtNewStorageState_1);
+  }
+}
 State mainRetractAndTurnAroundAtNewStorageState_1(){
   if(moveSM.Finished){
     info("Retracting");
