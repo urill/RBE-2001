@@ -109,11 +109,6 @@ State lineFollowState(){
   verbose(F("Following Line"));
   lastLineFollowStarted = millis();
   lineFollowPID.Reset();
-  if (stopOnVSwitch || stopOnBumperSwitch) {
-    lineFollowPID.SetTunings(LINE_FOLLOW_SLOW_KP,LINE_FOLLOW_SLOW_KI,LINE_FOLLOW_SLOW_KD);
-  } else {
-    lineFollowPID.SetTunings(LINE_FOLLOW_KP,LINE_FOLLOW_KI,LINE_FOLLOW_KD);
-  }
   moveSM.Set(lineFollowState_b);
 }
 
@@ -125,11 +120,7 @@ State lineFollowState_b(){
   int rightSensor = analogRead(PIN_LINE_SENSOR_R) + LINE_SENSOR_RIGHT_OFFSET;
   lineFollowSensorDifference = (double) (leftSensor - rightSensor);
   lineFollowPID.Compute();
-  if (stopOnVSwitch || stopOnBumperSwitch) {
-    drive.go(LINE_FOLLOW_APPROACHING_SPEED,lineFollowSteer);
-  } else {
-    drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
-  }
+  drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
   moveSM.Set(lineFollowWaitState);
 }
 
@@ -173,6 +164,18 @@ State retractState(){
 
 State retractWaitState(){
   if(moveSM.Timeout(RETRACT_TIME)){
+    moveSM.Set(stopState);
+  }
+}
+
+State retractPullState(){
+  verbose("retract");
+  drive.go(-RETRACT_SPEED,RETRACT_STEER);
+  moveSM.Set(retractPullWaitState);
+}
+
+State retractPullWaitState(){
+  if(moveSM.Timeout(RETRACT_PULL_TIME)){
     moveSM.Set(stopState);
   }
 }
