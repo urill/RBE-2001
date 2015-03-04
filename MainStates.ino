@@ -285,10 +285,6 @@ State mainPushInRodAtSpentStorageState(){
     setLineFollowStopCondition(0,1,1);
     moveSM.Set(lineFollowState);
     sm.Set(mainRetractAndTurnAroundAtSpentStorageState_1);
-/*
-  } else if (sm.Timeout(4000)){
-    sm.Set(mainBackupAtSpentStorageState);
-*/
   }
 }
 
@@ -298,6 +294,8 @@ State mainRetractAndTurnAroundAtSpentStorageState_1(){
     info("Retracting");
     moveSM.Set(retractState);
     sm.Set(mainRetractAndTurnAroundAtSpentStorageState_2);
+  } else if (sm.Timeout(4000)){
+    sm.Set(mainBackupAtSpentStorageState);
   }
 }
 
