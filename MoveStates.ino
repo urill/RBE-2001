@@ -34,6 +34,7 @@ State turnLeftWaitState(){
 }
 
 State turnDelayStopState(){
+  drive.go(0,0);
   if (moveSM.Timeout(TURN_STOP_DELAY)){
     moveSM.Set(stopState);
   }
