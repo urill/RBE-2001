@@ -219,6 +219,7 @@ byte getClosestNewStorage(){
 State mainMovingToSpentStorageState(){
    if (moveSM.Finished) {
     byte nextPosition = getClosestSpentStorage();
+    lcd.print(nextPosition);
     if (nextPosition != 0){
       navi.setNavigation(currentPosition, nextPosition);
       currentPosition = nextPosition;

@@ -168,18 +168,6 @@ State retractWaitState(){
   }
 }
 
-State retractPullState(){
-  verbose("retract");
-  drive.go(-RETRACT_SPEED,RETRACT_STEER);
-  moveSM.Set(retractPullWaitState);
-}
-
-State retractPullWaitState(){
-  if(moveSM.Timeout(RETRACT_PULL_TIME)){
-    moveSM.Set(stopState);
-  }
-}
-
 State insertState(){
   verbose("retract");
   drive.go(RETRACT_SPEED,0);
@@ -203,7 +191,7 @@ State backupUntilVSwitchOpen(){
 }
 
 State backupUntilVSwitchOpen_b(){
-  if (digitalRead(PIN_V_SWITCH) == HIGH && moveSM.Timeout(2000)){
+  if (digitalRead(PIN_V_SWITCH) == HIGH && moveSM.Timeout(BACKUP_VSWITCH_MIN_TIME)){
     moveSM.Set(stopState);
   }
 }
