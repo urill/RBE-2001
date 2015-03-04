@@ -461,6 +461,7 @@ State mainInsertingRodToReactorState_2(){
 
 State mainInsertingRodToReactorState_3(){
   if (gripperSM.Finished){
+    setRadiationLevel(0);
     sm.Set(mainRetractAndTurnAroundAtReplacedReactorState_1);
   }
 }
