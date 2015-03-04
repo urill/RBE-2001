@@ -59,7 +59,7 @@ State turnRightWaitState(){
 
 State turnAroundState(){
   verbose(F("Turn 180"));
-  drive.go(0,TURN_SPEED);
+  drive.go(TURN_180_FORWARD,TURN_SPEED);
   moveSM.Set(turnAroundWaitState);
 }
 
