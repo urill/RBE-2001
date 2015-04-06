@@ -34,6 +34,7 @@ State turnLeftWaitState(){
 }
 
 State turnDelayStopState(){
+  drive.go(0,0);
   if (moveSM.Timeout(TURN_STOP_DELAY)){
     moveSM.Set(stopState);
   }
@@ -58,7 +59,7 @@ State turnRightWaitState(){
 
 State turnAroundState(){
   verbose(F("Turn 180"));
-  drive.go(0,TURN_SPEED);
+  drive.go(TURN_180_FORWARD,TURN_SPEED);
   moveSM.Set(turnAroundWaitState);
 }
 
@@ -109,11 +110,6 @@ State lineFollowState(){
   verbose(F("Following Line"));
   lastLineFollowStarted = millis();
   lineFollowPID.Reset();
-  if (stopOnVSwitch || stopOnBumperSwitch) {
-    lineFollowPID.SetTunings(LINE_FOLLOW_SLOW_KP,LINE_FOLLOW_SLOW_KI,LINE_FOLLOW_SLOW_KD);
-  } else {
-    lineFollowPID.SetTunings(LINE_FOLLOW_KP,LINE_FOLLOW_KI,LINE_FOLLOW_KD);
-  }
   moveSM.Set(lineFollowState_b);
 }
 
@@ -125,11 +121,7 @@ State lineFollowState_b(){
   int rightSensor = analogRead(PIN_LINE_SENSOR_R) + LINE_SENSOR_RIGHT_OFFSET;
   lineFollowSensorDifference = (double) (leftSensor - rightSensor);
   lineFollowPID.Compute();
-  if (stopOnVSwitch || stopOnBumperSwitch) {
-    drive.go(LINE_FOLLOW_APPROACHING_SPEED,lineFollowSteer);
-  } else {
-    drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
-  }
+  drive.go(LINE_FOLLOW_SPEED,lineFollowSteer);
   moveSM.Set(lineFollowWaitState);
 }
 
@@ -200,7 +192,7 @@ State backupUntilVSwitchOpen(){
 }
 
 State backupUntilVSwitchOpen_b(){
-  if (digitalRead(PIN_V_SWITCH) == HIGH && moveSM.Timeout(2000)){
+  if (digitalRead(PIN_V_SWITCH) == HIGH && moveSM.Timeout(BACKUP_VSWITCH_MIN_TIME)){
     moveSM.Set(stopState);
   }
 }

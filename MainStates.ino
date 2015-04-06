@@ -219,6 +219,7 @@ byte getClosestNewStorage(){
 State mainMovingToSpentStorageState(){
    if (moveSM.Finished) {
     byte nextPosition = getClosestSpentStorage();
+    lcd.print(nextPosition);
     if (nextPosition != 0){
       navi.setNavigation(currentPosition, nextPosition);
       currentPosition = nextPosition;
@@ -284,10 +285,6 @@ State mainPushInRodAtSpentStorageState(){
     setLineFollowStopCondition(0,1,1);
     moveSM.Set(lineFollowState);
     sm.Set(mainRetractAndTurnAroundAtSpentStorageState_1);
-/*
-  } else if (sm.Timeout(4000)){
-    sm.Set(mainBackupAtSpentStorageState);
-*/
   }
 }
 
@@ -297,6 +294,8 @@ State mainRetractAndTurnAroundAtSpentStorageState_1(){
     info("Retracting");
     moveSM.Set(retractState);
     sm.Set(mainRetractAndTurnAroundAtSpentStorageState_2);
+  } else if (sm.Timeout(4000)){
+    sm.Set(mainBackupAtSpentStorageState);
   }
 }
 
@@ -462,6 +461,7 @@ State mainInsertingRodToReactorState_2(){
 
 State mainInsertingRodToReactorState_3(){
   if (gripperSM.Finished){
+    setRadiationLevel(0);
     sm.Set(mainRetractAndTurnAroundAtReplacedReactorState_1);
   }
 }
